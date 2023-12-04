@@ -1,12 +1,12 @@
 $(document).ready(function () {
-    let mainContainer = $("#main");
+    let main = $("#main");
     console.log("doc ready");
     $.ajax({
         type: "GET",
         url: "template/gallery.html",
         dataType: "text",
         success: function(response) {
-            mainContainer.html(response);
+            main.html(response);
         },
         error: function(error) {
             console.log(error);
