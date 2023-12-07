@@ -3,7 +3,7 @@ $(document).ready(function () {
     console.log("doc ready");
     $.ajax({
         type: "GET",
-        url: "template/gallery.html",
+        url: "template/Gallery.html",
         dataType: "text",
         success: function(response) {
             main.html(response);

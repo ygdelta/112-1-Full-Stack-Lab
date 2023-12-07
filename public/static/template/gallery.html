@@ -1,3 +1,48 @@
-<div class="bg-cyan-600 text-red-700 text-lg h-full w-full">
-    this is test of component.
+<div id="gallery-main" class="bg-cyan-600 text-red-700 text-lg h-full w-full p-2">
+    
 </div>
+
+<script>
+    $(document).ready(function () {
+        let main = $("#gallery-main");
+        $.ajax({
+            type: "GET",
+            url: "!!GET CLASS DATA API!!",
+            data: {},
+            dataType: "JSON",
+            success: function(res) {
+                res.forEach(function(element) {
+                    
+                });
+            },
+            error: function(err) {
+                console.log("get in err");
+                let resTest = [
+                    {
+                        Name: "Linear",
+                        Subject: "Math",
+                        Teacher: "Teacher1"
+                    },
+                    {
+                        Name: "AI",
+                        Subject: "Math",
+                        Teacher: "Teacher2"
+                    }
+                ];
+                resTest.forEach(function(element) {
+                    $.ajax({
+                        type: "GET",
+                        url: "template/ClassCard.html",
+                        dataType: "text",
+                        success: function (res) {
+                            res = res.replace("{{ Name }}", element.Name);
+                            res = res.replace("{{ Subject }}", element.Subject);
+                            res = res.replace("{{ Teacher }}", element.Teacher);
+                            main.append(res);
+                        }
+                    });
+                });
+            }
+        });
+    });
+</script>
