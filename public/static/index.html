@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <nav class="flex bg-slate-50 border-solid border-stone-300 border-y shadow-lg z-0">
+    <nav class="flex bg-slate-50 border-solid border-stone-300 border-y shadow-sm">
         <div class="flex flex-wrap items-center justify-between w-screen p-2 h-16">
             <div class="flex items-center">
                 <img class="rounded-xl w-8 h-8 p-2 hover:bg-slate-500 hover:cursor-pointer"
@@ -28,19 +28,21 @@
         </div>
     </nav>
     <div id="content" class="flex h-screen m-0">
-        <nav class="bg-slate-50 border-solid border-stone-300 border-x w-1/4 h-full z-50 m-0">
+        <nav class="transition-all ease-out overflow-hidden     
+                    bg-slate-50 border-solid border-stone-300 border-x 
+                    w-12 h-full m-0 
+                    hover:w-1/4 
+                    duration-300">
             <div class="flex flex-col">
                 <ul>
-                    <div class="flex items-center">
-                        <svg class="w-7 h-7 m-2" 
-                             focusable="false" 
-                             viewBox="0 0 24 24">
-                            <path d="M12 3L4 9v12h16V9l-8-6zm6 16h-3v-6H9v6H6v-9l6-4.5 6 4.5v9z"></path>
-                        </svg>
-                        <p class="m-2 hover:cursor-default">首頁</p>
+                    <div class="flex flex-row">
+                        <svg class="w-10 h-10 inline-block" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"></path>
+                          </svg>
+                        <span>Home 首頁</span>
                     </div>
                 </ul>
-                <ul>test2</ul>
+                <ul>test2aaaaaaaaaaaaaaaaaaa</ul>
                 <ul>test3</ul>
             </div>
         </nav>
