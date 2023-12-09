@@ -16,14 +16,15 @@
                 });
             },
             error: function(err) {
-                console.log("get in err");
                 let resTest = [
                     {
+                        ID: 1,
                         Name: "Linear",
                         Subject: "Math",
                         Teacher: "Teacher1"
                     },
                     {
+                        ID: 2,
                         Name: "AI",
                         Subject: "Math",
                         Teacher: "Teacher2"
@@ -35,7 +36,7 @@
                         url: "template/ClassCard.html",
                         dataType: "text",
                         success: function (res) {
-                            console.log("get in success function.");
+                            res = res.replace("{{ ClassId }}", element.ID);
                             res = res.replace("{{ Name }}", element.Name);
                             res = res.replace("{{ Subject }}", element.Subject);
                             res = res.replace("{{ Teacher }}", element.Teacher);

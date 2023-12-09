@@ -1,18 +1,12 @@
+let content;
+let sidebar;
+
 $(document).ready(function () {
-    let content = $("#content");
-    let sidebar = $("#sidebar");
-    console.log("doc ready");
-    $.ajax({
-        type: "GET",
-        url: "template/Gallery.html",
-        dataType: "text",
-        success: function(response) {
-            content.html(response);
-        },
-        error: function(error) {
-            console.log(error);
-        }
-    });
+    content = $("#content");
+    sidebar = $("#sidebar");
+
+    // For Debug
+    ShowPage("class");
 
     sidebar.hover(function() {
         if(sidebar.data("isOpen")) {
@@ -44,9 +38,31 @@ $(document).ready(function () {
             ReWriteCss(content, "width", `${$(window).width() - sidebar.outerWidth()}px`);
         }
     });
+
+    $("#home-btn").on("click", function(e) {
+        ShowPage("home");
+    });
 });
 
 // Funcitons
 function ReWriteCss(element, cssStyle, property) {
     element.css(cssStyle, property);
+}
+
+function ShowPage(page) {
+    let pages = {
+        "home": "template/Gallery.html",
+        "class": "template/Class.html"
+    }
+    $.ajax({
+        type: "GET",
+        url: pages[page],
+        dataType: "text",
+        success: function(res) {
+            content.html(res);
+        },
+        error: function(err) {
+            alert("Error");
+        }
+    });
 }

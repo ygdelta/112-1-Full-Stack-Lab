@@ -7,7 +7,8 @@ module.exports = {
     extend: {
       transitionProperty: {
         "width": "width"
-      }
+      },
+      backgroundColor: ['active']
     },
   },
   plugins: [],
