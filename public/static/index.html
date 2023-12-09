@@ -5,18 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Classroom</title>
-    <link rel="stylesheet" href="../css/app.css">
+    <!-- <link rel="stylesheet" href="../css/app.css"> -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"
         integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <script src="../js/test.js"></script>
+    <script src="../js/index.js"></script>
 </head>
-
 <body>
-    <nav class="flex bg-slate-50 border-solid border-stone-300 border-y shadow-sm">
+    <nav class="fixed top-0 left-0 bg-slate-50 border-solid border-stone-300 border-y shadow-sm z-50">
         <div class="flex flex-wrap items-center justify-between w-screen p-2 h-16">
             <div class="flex items-center">
-                <img class="rounded-xl w-8 h-8 p-2 hover:bg-slate-500 hover:cursor-pointer"
+                <img id="sidebar-btn" class="rounded-xl w-8 h-8 p-2 hover:bg-slate-500 hover:cursor-pointer"
                     src="../img/open-menu-svgrepo-com.svg">
                 <img class="w-10 h-10 p-2" src="../img/icon.png">
                 <p class="font-semibold text-lg hover:cursor-default">學習平台</p>
@@ -27,29 +26,25 @@
             </div>
         </div>
     </nav>
-    <div id="content" class="flex h-screen m-0">
-        <nav class="transition-all ease-out overflow-hidden     
-                    bg-slate-50 border-solid border-stone-300 border-x 
-                    w-12 h-full m-0 
-                    hover:w-1/4 
-                    duration-300">
-            <div class="flex flex-col">
-                <ul>
-                    <div class="flex flex-row">
-                        <svg class="w-10 h-10 inline-block" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"></path>
-                          </svg>
-                        <span>Home 首頁</span>
-                    </div>
-                </ul>
-                <ul>test2aaaaaaaaaaaaaaaaaaa</ul>
-                <ul>test3</ul>
+    <nav id="sidebar" class="fixed top-[66px] left-0 overflow-hidden 
+                bg-slate-50 border-solid border-stone-300 border-x 
+                w-16 h-full m-0 z-40
+                hover:shadow-2xl"
+                data-isOpen="false">
+        <div class="flex flex-col">
+            <div class="flex items-center rounded-r-3xl overflow-hidden mt-2 hover:bg-teal-50 hover:cursor-pointer">
+                <div class="w-16 h-16 p-4">
+                    <svg fill="none" stroke="currentColor" stroke-width="2.0" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"></path>
+                    </svg>
+                </div>
+                <div class="whitespace-nowrap pr-9">首頁 Home</div>
             </div>
-        </nav>
-        <div id="main" class="w-3/4 m-0">
-            test here.
-            <!-- content here -->
         </div>
+    </nav>
+    <div id="content" class="relative top-16 left-16 w-[calc(100%-64px)] h-screen m-0 z-30">
+        test here.
+        <!-- content here -->
     </div>
 </body>
 
