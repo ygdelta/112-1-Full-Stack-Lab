@@ -36,11 +36,11 @@
                         url: "template/ClassCard.html",
                         dataType: "text",
                         success: function (res) {
-                            res = res.replace("{{ ClassId }}", element.ID);
-                            res = res.replace("{{ Name }}", element.Name);
-                            res = res.replace("{{ Subject }}", element.Subject);
-                            res = res.replace("{{ Teacher }}", element.Teacher);
-                            main.append(res);
+                            $.tmpl(res, element).appendTo(main);
+                        },
+                        error: function(err) {
+                            alert("An Error Occurred!");
+                            console.log("Gallery.html -> line43");
                         }
                     });
                 });

@@ -1,16 +1,16 @@
 <div onclick="CardOnClick(event)" class="bg-slate-50 border-solid border-stone-300 border rounded-lg h-fit m-2 p-2 hover:cursor-pointer hover:shadow-lg">
-    <p id="id" hidden>{{ ClassId }}</p>
+    <p id="id" hidden>${ID}</p>
     <div class="flex">
-        <p>課程名稱：</p>
-        <p>{{ Name }}</p>
+        <p>課程名稱：${Name}</p>
+        <p>${Name}</p>
     </div>
     <div class="flex">
         <p>課程科目：</p>
-        <p>{{ Subject }}</p>
+        <p>${Subject}</p>
     </div>
     <div class="flex">
         <p>課程教師：</p>
-        <p>{{ Teacher }}</p>
+        <p>${Teacher}</p>
     </div>
 </div>
 <script>

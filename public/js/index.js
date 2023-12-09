@@ -1,9 +1,13 @@
-let content;
-let sidebar;
+let pages = {
+    "home": "template/Gallery.html",
+    "class": "template/Class.html",
+    "class/information": "template/ClassInformation.html",
+    "class/discussion": "template/ClassDiscussion.html"
+}
 
 $(document).ready(function () {
-    content = $("#content");
-    sidebar = $("#sidebar");
+    let content = $("#content");
+    let sidebar = $("#sidebar");
 
     // For Debug
     ShowPage("class");
@@ -49,20 +53,17 @@ function ReWriteCss(element, cssStyle, property) {
     element.css(cssStyle, property);
 }
 
-function ShowPage(page) {
-    let pages = {
-        "home": "template/Gallery.html",
-        "class": "template/Class.html"
-    }
+function ShowPage(page, container = $("#content")) {
     $.ajax({
         type: "GET",
         url: pages[page],
         dataType: "text",
         success: function(res) {
-            content.html(res);
+            console.log(container);
+            container.html(res);
         },
         error: function(err) {
-            alert("Error");
+            alert("ShowPage() Error!");
         }
     });
 }
