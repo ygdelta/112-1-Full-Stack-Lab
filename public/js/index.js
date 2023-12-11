@@ -59,7 +59,6 @@ function ShowPage(page, container = $("#content")) {
         url: pages[page],
         dataType: "text",
         success: function(res) {
-            console.log(container);
             container.html(res);
         },
         error: function(err) {

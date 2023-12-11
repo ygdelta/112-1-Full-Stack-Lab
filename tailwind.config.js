@@ -6,9 +6,9 @@ module.exports = {
   theme: {
     extend: {
       transitionProperty: {
-        "width": "width"
-      },
-      backgroundColor: ['active']
+        'height': 'height',
+        'width': 'width'
+      }
     },
   },
   plugins: [],
