@@ -1,16 +1,22 @@
-let pages = {
-    "home": "template/gallery.html",
-    "class": "template/class.html",
-    "class/information": "template/class_information.html",
-    "class/discussion": "template/class_discussion.html"
-}
+const pages = {
+    "home": "static/template/gallery.html",
+    "class": "static/template/class.html",
+    "class/information": "static/template/class_information.html",
+    "class/discussion": "static/template/class_discussion.html"
+};
+
+const components = {
+    "classCard": "static/template/class_card.html",
+    "classChapter": "static/template/class_chapter.html",
+    "classSection": "static/template/class_sections.html"
+};
 
 $(document).ready(function () {
     let content = $("#content");
     let sidebar = $("#sidebar");
 
     // For Debug
-    ShowPage("class");
+    ShowPage("home");
 
     sidebar.hover(function() {
         if(sidebar.data("isOpen")) {
@@ -54,6 +60,7 @@ function ReWriteCss(element, cssStyle, property) {
 }
 
 function ShowPage(page, container = $("#content")) {
+    console.log(container);
     $.ajax({
         type: "GET",
         url: pages[page],

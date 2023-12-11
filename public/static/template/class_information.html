@@ -1,20 +1,89 @@
 <div id="class-content" class="w-3/5 text-center">
-    <div class="flex flex-col">
-        <div class="text-left text-4xl text-blue-600 border-solid border-blue-600 border-b w-full p-3">
-            第一章 Mutex
-        </div>
-        <div class="flex flex-col my-4">
-            <iframe class="w-[516px] h-[318px]" src="https://www.youtube.com/embed/K1gbveCNlQs" frameborder="0" allowfullscreen></iframe>  
-        </div>
-        <ul class="transition-all ease-out bg-green-600 text-lg text-left w-full overflow-hidden h-7 hover:h-max hover:bg-yellow-400 duration-1000">
-            Section1
-            <ul class="bg-green-300">1.1</ul>
-            <ul class="bg-green-300">1.2</ul>
-            <ul class="bg-green-300">1.3</ul>
-            <ul class="bg-green-300">1.4</ul>
-        </ul>
+    <div id="chapter-content" class="flex flex-col h-auto p-4">
     </div>
 </div>
 <script>
-    
+    $(document).ready(function() {
+        $.ajax({
+            type: "POST",
+            url: "Get_Chapters_and_Sections",
+            data: {},
+            dataType: "JSON",
+            success: function(res) {
+                // Wait implement.
+            },
+            error: function(err) {
+                console.log("get in err");
+                let data = {
+                    data: [
+                        {
+                            chapter: "Chapter1",
+                            section: [
+                                {
+                                    name: "Section1-1",
+                                    videoID: "K1gbveCNlQs"
+                                },
+                                {
+                                    name: "Section1-2",
+                                    videoID: "K1gbveCNlQs"
+                                },
+                                {
+                                    name: "Section1-3",
+                                    videoID: "K1gbveCNlQs"
+                                },
+                                {
+                                    name: "Section1-4",
+                                    videoID: "K1gbveCNlQs"
+                                },
+                            ]
+                        },
+                        {
+                            chapter: "Chapter2",
+                            section: [
+                                {
+                                    name: "Section2-1",
+                                    videoID: "HPvJRDergYM"
+                                },
+                                {
+                                    name: "Section2-2",
+                                    videoID: "HPvJRDergYM"
+                                },
+                                {
+                                    name: "Section2-3",
+                                    videoID: "HPvJRDergYM"
+                                }
+                            ]
+                        },
+                    ]
+                };
+                data.data.forEach(function(element) {
+                    console.log(element);
+                    $.ajax({
+                        type: "GET",
+                        url: components["classChapter"],
+                        dataType: "text",
+                        success: function(classChapter) {
+                            $.tmpl(classChapter, element).appendTo($("#chapter-content"));
+                            $.ajax({
+                                type: "GET",
+                                url: components["classSection"],
+                                dataType: "text",
+                                success: function(classSection) {
+                                    element.section.forEach(function(item) {
+                                        $.tmpl(classSection, item).appendTo($(`#${element.chapter}-section`));
+                                    });
+                                },
+                                error: function(err) {
+                                    alert("An Error Occurred!");
+                                    console.log("class_information.html");
+                                }
+                            });
+
+                        }
+                    });
+                    
+                });
+            }
+        });
+    });
 </script>

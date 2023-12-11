@@ -4,10 +4,11 @@
 
 <script>
     $(document).ready(function() {
+        console.log("Gallery.html test");
         let main = $("#gallery-main");
         $.ajax({
             type: "GET",
-            url: "!!GET CLASS DATA API!!",
+            url: "!/getclasses",
             data: {},
             dataType: "JSON",
             success: function(res) {
@@ -33,7 +34,7 @@
                 resTest.forEach(function(element) {
                     $.ajax({
                         type: "GET",
-                        url: "template/class_card.html",
+                        url: components["classCard"],
                         dataType: "text",
                         success: function (res) {
                             $.tmpl(res, element).appendTo(main);

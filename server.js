@@ -19,12 +19,13 @@ app.get("/", (req, res) => {
       res.status(500).send("Internal Server Error");
     } else {
       // 成功讀取，回傳 HTML 內容
+      res.set('Content-Type', 'text/html');
       res.status(200).send(data);
     }
   });
 });
 
-const port = 3000;
+const port = 8080;
 const ip = "127.0.0.1";
 
 app.listen(port, ip, function () {
