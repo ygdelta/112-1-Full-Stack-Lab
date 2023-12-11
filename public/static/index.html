@@ -10,6 +10,30 @@
     <script src="../js/index.js"></script>
     <script src="../js/jquery.tmpl.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // 獲取按鈕元素
+            var signInButton = document.getElementById("btn-signin");
+            var signUpButton = document.getElementById("btn-signup");
+
+            // 添加點擊事件監聽器
+            signInButton.addEventListener("click", function () {
+                // 在這裡執行當 "btn-signin" 按下時的邏輯
+                console.log("Sign In button clicked!");
+
+                // 導向到新的 HTML，這裡假設新 HTML 文件為 button1.html
+                window.location.href = "/login";
+            });
+
+            signUpButton.addEventListener("click", function () {
+                // 在這裡執行當 "btn-signup" 按下時的邏輯
+                console.log("Sign Up button clicked!");
+
+                // 導向到新的 HTML，這裡假設新 HTML 文件為 button2.html
+                window.location.href = "/register";
+            });
+        });
+    </script>
 </head>
 <body>
     <nav class="fixed top-0 left-0 bg-slate-50 border-solid border-stone-300 border-y shadow-sm z-50">
