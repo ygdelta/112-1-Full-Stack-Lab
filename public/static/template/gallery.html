@@ -33,7 +33,7 @@
                 resTest.forEach(function(element) {
                     $.ajax({
                         type: "GET",
-                        url: "template/ClassCard.html",
+                        url: "template/class_card.html",
                         dataType: "text",
                         success: function (res) {
                             $.tmpl(res, element).appendTo(main);

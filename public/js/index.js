@@ -1,8 +1,8 @@
 let pages = {
-    "home": "template/Gallery.html",
-    "class": "template/Class.html",
-    "class/information": "template/ClassInformation.html",
-    "class/discussion": "template/ClassDiscussion.html"
+    "home": "template/gallery.html",
+    "class": "template/class.html",
+    "class/information": "template/class_information.html",
+    "class/discussion": "template/class_discussion.html"
 }
 
 $(document).ready(function () {
