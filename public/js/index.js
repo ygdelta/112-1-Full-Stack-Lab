@@ -22,7 +22,7 @@ $(document).ready(function () {
         if(sidebar.data("isOpen")) {
             return;
         }
-        ReWriteCss(sidebar, "width", "fit-content");
+        ReWriteCss(sidebar, "width", "182px");
     }, function() {
         if(sidebar.data("isOpen")) {
             return;
