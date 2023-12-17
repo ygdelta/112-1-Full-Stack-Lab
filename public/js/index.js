@@ -32,6 +32,14 @@ $(document).ready(function () {
 
     // Onclick Events
     // Open sidebar
+    $("#btn-login").on("click", function(e) {
+        window.location.href = "/login";
+    });
+
+    $("#btn-signup").on("click", function(e) {
+        window.location.href = "/register";
+    });
+
     $("#sidebar-btn").on("click", function(e){
         if(sidebar.data("isOpen")) {
             sidebar.data("isOpen", false);
