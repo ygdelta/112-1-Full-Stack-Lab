@@ -7,42 +7,41 @@
     <link rel="stylesheet" href="../css/app.css">
     <script src="https://code.jquery.com/jquery-3.7.1.js"
     integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <script src="../js/login.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
     <div class="flex flex-wrap items-center justify-center w-screen h-screen">
-        <div class="flex items-start justify-start overflow-hidden w-60 h-fit">
+        <div class="flex items-start justify-start shadow-md rounded-lg overflow-hidden w-60 h-fit">
             <div class="transition-all ease-in duration-100 shrink-0 classic-border rounded-lg w-60 h-fit p-4">
-                <p class="select-none mt-2 mb-1 text-4xl font-semibold">學生登入</p>
+                <p class="select-none mt-2 mb-1 text-4xl font-semibold">學生登錄</p>
                 <form method="POST" action="/studentLogin" class="flex flex-col">
                     <p class="">帳號：</p>
                     <input type="text" class="classic-border mb-2 rounded-md">
                     <p class="">密碼：</p>
                     <input type="password" class="classic-border mb-2 rounded-md">
-                    <button id="btn-login" class="classic-border bg-sky-400 rounded-md my-2">登錄</button>
-                    <button id="btn-register" class="classic-border rounded-md my-2">註冊</button>
+                    <button class="classic-border bg-blue-600 rounded-md my-2 hover:bg-blue-400">登錄</button>
                 </form>
-                <p id="href-teacher" class="text-blue-600 underline select-none hover:text-blue-800 hover:cursor-pointer">我是老師</p>
+                <p id="href-teacher" class="text-blue-600 underline select-none my-2 hover:text-blue-800 hover:cursor-pointer">我是老師</p>
+                <p class="text-blue-600 underline select-none hover:text-blue-800 hover:cursor-pointer go-register">前往註冊</p>
             </div>
             <div class="shrink-0 classic-border rounded-lg w-60 h-fit p-4">
-                <p class="select-none mt-2 mb-1 text-4xl font-semibold">老師登入</p>
+                <p class="select-none mt-2 mb-1 text-4xl font-semibold">老師登錄</p>
                 <form method="POST" action="/teacherLogin" class="flex flex-col">
                     <p class="">帳號：</p>
                     <input type="text" class="classic-border mb-2 rounded-md">
                     <p class="">密碼：</p>
                     <input type="password" class="classic-border mb-2 rounded-md">
-                    <button id="btn-login" class="classic-border bg-sky-400 rounded-md my-2">登錄</button>
-                    <button id="btn-register" class="classic-border rounded-md my-2">註冊</button>
+                    <button class="classic-border bg-blue-600 rounded-md my-2 hover:bg-blue-400">登錄</button>
                 </form>
-                <p id="href-student" class="text-blue-600 underline select-none hover:text-blue-800 hover:cursor-pointer">我是學生</p>
+                <p id="href-student" class="text-blue-600 underline select-none my-2 hover:text-blue-800 hover:cursor-pointer">我是學生</p>
+                <p class="text-blue-600 underline select-none hover:text-blue-800 hover:cursor-pointer go-register">前往註冊</p>
             </div>
         </div>
     </div>
 </body>
 <script>
 $(document).ready(function() {
-    $("#btn-register").on("click", function(event) {
+    $(".btn-register").on("click", function(event) {
         event.preventDefault();
         window.location.href = "http://localhost:8080/register";
     });
@@ -54,6 +53,10 @@ $(document).ready(function() {
     $("#href-student").on("click", function(event) {
         $("#href-teacher").parent().removeClass("-ml-60");
     });
+
+    $("p.go-register").on("click", function(event) {
+            window.location.href = "http://localhost:8080/register";
+        });
 });
 </script>
 </html>
