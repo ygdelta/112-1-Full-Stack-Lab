@@ -1,0 +1,63 @@
+<div class="classic-border rounded-md overflow-hidden w-full h-fit mt-6 px-4 py-3">
+    <div class="flex flex-col items-start border-solid border-b border-stone-300">
+        <div class="flex">
+            <img class="w-11 h-11" src="../../img/user.png">
+            <div class="mx-3">
+                <p class="text-sm font-bold">${user}</p>
+                <p class="text-xs text-stone-400">${date}</p>
+            </div>           
+        </div>
+        <p class="text-wrap text-base my-2">${content}</p>
+    </div>
+    {{if comment.length > 1}}
+    <p onclick="expandComment(event)" class="select-none text-left mt-3 hover:cursor-pointer underline" data-isopened="false">${comment.length}則留言</p>
+    {{/if}}
+    {{each(i, item) comment}}
+        {{if i != comment.length - 1}}
+        <div class="comment flex items-start hidden mt-4">
+            <img class="w-11 h-11" src="../../img/user.png">
+            <div class="flex flex-col items-start">
+                <div class="flex flex-row items-start justify-center h-fit mx-3">
+                    <p class="text-sm font-bold">${item.user}</p>
+                    <p class="text-xs text-stone-400 mx-2">${item.date}</p>
+                </div>           
+                <p class="text-wrap text-left text-base mx-3">${item.content}</p>
+            </div>
+        </div>
+        {{else}}
+        <div class="comment flex items-start mt-4">
+            <img class="w-11 h-11" src="../../img/user.png">
+            <div class="flex flex-col items-start">
+                <div class="flex flex-row items-start justify-center h-fit mx-3">
+                    <p class="text-sm font-bold">${item.user}</p>
+                    <p class="text-xs text-stone-400 mx-2">${item.date}</p>
+                </div>           
+                <p class="text-wrap text-left text-base mx-3">${item.content}</p>
+            </div>
+        </div>
+        {{/if}}
+    {{/each}}
+    <div class="flex flex-row-reverse w-full mt-4 justify-center">
+        <svg class="w-8 h-8 inline-block hover:cursor-pointer" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"></path>
+        </svg>
+        <input class="classic-border rounded-2xl w-full mr-2 px-3" type="text" placeholder="新增留言">
+    </div>
+</div>
+<script>
+function expandComment(event) {
+    let btnExpand = $(event.currentTarget);
+    let comments = btnExpand.parent().children("div.comment");
+    let isOpened =  btnExpand.data("isopened");
+    if(isOpened === "true") {
+        for(i = 0; i < comments.length - 1; i++) {
+            $(comments[i]).addClass("hidden");
+        }
+        btnExpand.data("isopened", "false");
+    }
+    else {
+        comments.removeClass("hidden");
+        btnExpand.data("isopened", "true");
+    }
+}
+</script>

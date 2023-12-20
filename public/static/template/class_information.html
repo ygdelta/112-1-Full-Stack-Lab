@@ -13,7 +13,6 @@
                 // Wait implement.
             },
             error: function(err) {
-                console.log("get in err");
                 let data = {
                     data: [
                         {
@@ -57,7 +56,6 @@
                     ]
                 };
                 data.data.forEach(function(element) {
-                    console.log(element);
                     $.ajax({
                         type: "GET",
                         url: components["classChapter"],
@@ -75,7 +73,6 @@
                                 },
                                 error: function(err) {
                                     alert("An Error Occurred!");
-                                    console.log("class_information.html");
                                 }
                             });
 

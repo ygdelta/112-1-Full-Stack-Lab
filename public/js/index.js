@@ -8,7 +8,8 @@ const pages = {
 const components = {
     "classCard": "static/template/class_card.html",
     "classChapter": "static/template/class_chapter.html",
-    "classSection": "static/template/class_sections.html"
+    "classSection": "static/template/class_sections.html",
+    "commentCard": "static/template/message_area.html"
 };
 
 $(document).ready(function () {
@@ -16,7 +17,8 @@ $(document).ready(function () {
     let sidebar = $("#sidebar");
 
     // For Debug
-    ShowPage("home");
+    // ShowPage("home");
+    ShowPage("class");
 
     sidebar.hover(function() {
         if(sidebar.data("isOpen")) {
@@ -68,7 +70,6 @@ function ReWriteCss(element, cssStyle, property) {
 }
 
 function ShowPage(page, container = $("#content")) {
-    console.log(container);
     $.ajax({
         type: "GET",
         url: pages[page],
@@ -80,4 +81,12 @@ function ShowPage(page, container = $("#content")) {
             alert("ShowPage() Error!");
         }
     });
+}
+
+function formatDate(date = new Date()) {
+    const year = date.toLocaleString("default", {year: "numeric"});
+    const month = date.toLocaleString("default", {month: "2-digit"});
+    const day = date.toLocaleString("default", {day: "2-digit"});
+    return year + month + day;
+    //return [year, month, day].join("-");
 }
