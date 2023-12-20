@@ -8,7 +8,6 @@ const pages = {
 const components = {
     "classCard": "static/template/class_card.html",
     "classChapter": "static/template/class_chapter.html",
-    "classSection": "static/template/class_sections.html",
     "commentCard": "static/template/message_area.html"
 };
 

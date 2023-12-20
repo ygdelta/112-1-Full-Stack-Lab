@@ -3,84 +3,68 @@
     </div>
 </div>
 <script>
-    $(document).ready(function() {
-        $.ajax({
-            type: "POST",
-            url: "Get_Chapters_and_Sections",
-            data: {},
-            dataType: "JSON",
-            success: function(res) {
-                // Wait implement.
-            },
-            error: function(err) {
-                let data = {
-                    data: [
+$(document).ready(function() {
+    $.ajax({
+        type: "POST",
+        url: "getChaptersAndSections",
+        data: {},
+        dataType: "JSON"
+    })
+    .then(function(res) {
+        /*Implement success function here*/
+    }, function(err) {
+        let data = {
+            data: [
+                {
+                    chapter: "Chapter1",
+                    section: [
                         {
-                            chapter: "Chapter1",
-                            section: [
-                                {
-                                    name: "Section1-1",
-                                    videoID: "K1gbveCNlQs"
-                                },
-                                {
-                                    name: "Section1-2",
-                                    videoID: "K1gbveCNlQs"
-                                },
-                                {
-                                    name: "Section1-3",
-                                    videoID: "K1gbveCNlQs"
-                                },
-                                {
-                                    name: "Section1-4",
-                                    videoID: "K1gbveCNlQs"
-                                },
-                            ]
+                            name: "Section1-1",
+                            videoID: "K1gbveCNlQs"
                         },
                         {
-                            chapter: "Chapter2",
-                            section: [
-                                {
-                                    name: "Section2-1",
-                                    videoID: "HPvJRDergYM"
-                                },
-                                {
-                                    name: "Section2-2",
-                                    videoID: "HPvJRDergYM"
-                                },
-                                {
-                                    name: "Section2-3",
-                                    videoID: "HPvJRDergYM"
-                                }
-                            ]
+                            name: "Section1-2",
+                            videoID: "K1gbveCNlQs"
+                        },
+                        {
+                            name: "Section1-3",
+                            videoID: "K1gbveCNlQs"
+                        },
+                        {
+                            name: "Section1-4",
+                            videoID: "K1gbveCNlQs"
                         },
                     ]
-                };
-                data.data.forEach(function(element) {
-                    $.ajax({
-                        type: "GET",
-                        url: components["classChapter"],
-                        dataType: "text",
-                        success: function(classChapter) {
-                            $.tmpl(classChapter, element).appendTo($("#chapter-content"));
-                            $.ajax({
-                                type: "GET",
-                                url: components["classSection"],
-                                dataType: "text",
-                                success: function(classSection) {
-                                    element.section.forEach(function(item) {
-                                        $.tmpl(classSection, item).appendTo($(`#${element.chapter}-section`));
-                                    });
-                                },
-                                error: function(err) {
-                                    alert("An Error Occurred!");
-                                }
-                            });
-
+                },
+                {
+                    chapter: "Chapter2",
+                    section: [
+                        {
+                            name: "Section2-1",
+                            videoID: "HPvJRDergYM"
+                        },
+                        {
+                            name: "Section2-2",
+                            videoID: "HPvJRDergYM"
+                        },
+                        {
+                            name: "Section2-3",
+                            videoID: "HPvJRDergYM"
                         }
-                    });
-                    
-                });
-            }
+                    ]
+                },
+            ]
+        };
+        data.data.forEach(function(item) {
+            $.ajax({
+                type: "GET",
+                url: components["classChapter"],
+                dataType: "text"
+            })
+            .then(function(res) {
+                $.tmpl(res, item).appendTo("#chapter-content");
+            });
         });
     });
+});
 </script>
