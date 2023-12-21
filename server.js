@@ -13,7 +13,7 @@ const app = express();
 //   console.log(row.ID + ':' + row.Name + " " + row.Subject);
 // });
 // db.close();
-/////////////////////////////12/21練習的領域/////////////////////////////////////////
+/////////////////////////////12/21練習的領域(查詢)/////////////////////////////////////////
 // SQL查詢學生有哪些課
 const query = `
     SELECT Class.ID, Class.Name as ClassName
@@ -38,15 +38,15 @@ const query3 = `
     WHERE User.Name = ?;
 `;
 //測試用
-const targetUsername = '蔡明誠';
+const target = '蔡明誠';
 // 執行查詢
-db.all(query3, targetUsername, (err, rows) => {
+db.all(query3, [target], (err, rows) => {
   if (err) {
     throw err;
   }
 
   // 處理查詢結果
-  console.log(`Information about ${targetUsername} :`);
+  console.log(`Information about ${target} :`);
   rows.forEach(row => {
     //console.log(`Class ID: ${row.ID}, Class Name: ${row.ClassName}`);
     //console.log(`Teacher ID: ${row.TeacherID}, Teacher Name: ${row.TeacherName}, Class Name: ${row.ClassName}`);
@@ -55,7 +55,42 @@ db.all(query3, targetUsername, (err, rows) => {
 
 
 });
-/////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////資料庫修改/////////////////////////////////////////////////////
+const userIdToUpdate = 2;
+const newName = '楊小煜';
+const updateQuery = `
+    UPDATE User
+    SET Name = ?
+    WHERE ID = ?;
+`;
+db.run(updateQuery, [newName, userIdToUpdate], function (err) {
+  if (err) {
+    throw err;
+  }
+
+  // 這裡的 this.lastID 是最後一次插入的行的ID，這裡是更新，所以通常為更新的行數
+  console.log(`Update success: ${this.changes}`);
+
+});
+////////////////////////////////資料庫刪除/////////////////////////////////////////////////////
+const classIdToDelete = 4;
+const deleteQuery = `
+    DELETE FROM Class
+    WHERE ID = ?;
+`;
+
+// 執行刪除語句
+db.run(deleteQuery, [classIdToDelete], function (err) {
+  if (err) {
+    throw err;
+  }
+
+  // 這裡的 this.changes 是受影響的行數，通常為刪除的行數
+  console.log(`Delete success: ${this.changes}`);
+});
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////
 // 設定靜態資源目錄
 app.use(express.static(path.join(__dirname, "public")));
 
