@@ -1,4 +1,4 @@
-<div id="discussion-container" class="w-3/5 h-full text-center pt-6">
+<div id="discussion-container" class="w-3/5 h-fit text-center py-6">
     <div id="message-container" class="flex flex-wrap justify-end classic-border rounded-md overflow-hidden p-2 h-14 hover:cursor-pointer" data-isopened="true">
         <div class="message-board text-stone-400 text-lg text-left w-full h-12 pt-1 pl-2">要在課程中宣布的事項</div>
         <textarea id="message" class="resize-none bg-stone-100 rounded-md text-lg w-full h-64 py-1 px-2" placeholder="要在課程中宣布的事項"></textarea>
@@ -16,53 +16,53 @@ $(document).ready(function() {
         dataType: "JSON"
     })
     .then(function(res) {
-        for(i = 0; i < 5; i++) {
-            $.tmpl(res, );
-        }        
+        /* Wait implement */       
     }, function(err) {
         var testData = {
             data: [
                 {
+                    id: 1,
                     user: "I am teacher",
                     content: "I am message board test.",
-                    date: formatDate(),
+                    date: FormatDate(),
                     comment: [
                         {
                             user: "Student 1",
                             content: "this comment was from student 1",
-                            date: formatDate()
+                            date: FormatDate()
                         },
                         {
                             user: "Student 2",
                             content: "this comment was from student 2",
-                            date: formatDate()
+                            date: FormatDate()
                         },
                         {
                             user: "Student 3",
                             content: "this comment was from student 3",
-                            date: formatDate()
+                            date: FormatDate()
                         }
                     ]
                 },
                 {
+                    id: 2,
                     user: "王昱鈞",
                     content: "這是留言板測試.",
-                    date: formatDate(),
+                    date: FormatDate(),
                     comment: [
                         {
                             user: "楊小弟1",
                             content: "this comment was from 楊小弟1",
-                            date: formatDate()
+                            date: FormatDate()
                         },
                         {
                             user: "楊小弟2",
                             content: "this comment was from 楊小弟2",
-                            date: formatDate()
+                            date: FormatDate()
                         },
                         {
                             user: "楊小弟3",
                             content: "this comment was from 楊小弟3",
-                            date: formatDate()
+                            date: FormatDate()
                         }
                     ]
                 }
@@ -86,20 +86,40 @@ $(document).ready(function() {
     $("#btn-board-cancel").on("click", messageOnClick);
 
     $("#btn-send").on("click", function(event) {
-        let content = $("#message").val();
+        let commentCard;
+        let cardData = {
+            id: -1,
+            user: userData.name,
+            date: new Date(),
+            content: $("#message").val(),
+            comment: []
+        };
+
+        $.ajax({
+            type: "GET",
+            url: components["commentCard"],
+            datatype: "text",
+            success: function(res) {
+                commentCard = res; 
+            },
+        });
+
+        /* Post data to server */
         $.ajax({
             type: "POST",
             url: "url",
-            data: {data: content},
+            data: cardData,
             dataType: "JSON",
-            success: function(res) {
-                $("#message").val("");
-                alert("Message send.");
-            }, 
-            error: function(err) {
-                alert("Error occured.")
-            }
+        })
+        .then(function(res) {
+            /* cardData.id = res.data.id */
+        }, function(err) {
+            /* 假設id為900 */
+            alert("Error occured.");
+            cardData.id = 900; 
+            $.tmpl(commentCard, cardData).appendTo("#discussion-container");
         });
+        $("#message").val("");
         messageOnClick({});
     });
 });
