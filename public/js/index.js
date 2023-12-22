@@ -13,8 +13,30 @@ const components = {
 
 let userData = {
     name: "testUser",
-    type: "student"
+    type: "teacher"
 };
+
+const joinClassTemplate = `
+    <!--html-->
+    <div class="flex items-center justify-center w-full f-fit">
+        <div class="flex flex-row items-center w-full">
+            <input class="text-lg classic-border rounded-md w-full h-fit p-3" type="number" placeholder="請輸入課程代碼"> 
+            <button onclick="OnJoinClass(event)" class="text-lg text-white p-2 bg-blue-600 rounded-md w-24 h-fit m-2">新增</button>
+        </div>
+    </div>
+    <!--!html-->
+`;
+
+const createClassTemplate = `
+    <!--html-->
+    <div class="flex items-center justify-center w-full f-fit">
+        <div class="flex flex-row items-center w-full">
+            <input class="text-lg classic-border rounded-md w-full h-fit p-3" type="number" placeholder="請輸入課程名稱"> 
+            <button onclick="OnJoinClass(event)" class="text-lg text-white p-2 bg-blue-600 rounded-md w-24 h-fit m-2">建立</button>
+        </div>
+    </div>
+    <!--!html-->
+`;
 
 $(document).ready(function () {
     let content = $("#content");
@@ -150,4 +172,60 @@ function SendComment(event) {
     });
 
     $(event.currentTarget).next("input").val("");
+}
+
+function ShowModal(setting = {
+    title: "Title",
+    content: "Content"
+}) {
+    let body = $("body");
+    let template = `
+    <!--html-->
+    <div id="modal" class="fixed top-0 left-0 z-[49]">
+        <div onclick="CloseModal()" class="fixed top-0 left-0 bg-gray-800 opacity-50 w-screen h-screen z-[49]"></div>
+        <div class="flex flex-col fixed top-[calc(50%-150px)] left-[calc(50%-250px)] bg-stone-50 classic-border rounded-md w-[500px] h-[300px] z-50">
+            <div class="font-semibold text-3xl border-solid border-b border-stone-300 w-full h-fit p-3">${setting.title}</div>
+            <div class="flex w-full h-full px-2 pb-3">${setting.content}</div>
+        </div>
+    </div>
+    <!--!html-->
+    `;
+    $.tmpl(template, {}).appendTo(body);
+}
+
+function CloseModal() {
+    $("#modal").remove();
+}
+
+function OnJoinClass(e) {
+    let input = $(e.currentTarget).prev().val();
+    $.ajax({
+        type: "POST",
+        url: "joinClass",
+        data: {id: input},
+        dataType: "JSON"
+    })
+    .then(function(res) {
+        // Do something.
+        CloseModal();
+    }, function(err) {
+        alert("加入課程發生錯誤");
+
+    });
+}
+
+function OnCreateClass(e) {
+    let input = $(e.currentTarget).prev().val();
+    $.ajax({
+        type: "POST",
+        url: "createClass",
+        data: {className: input},
+        dataType: "JSON",
+    })
+    .then(function(res) {
+        // Do something.
+        CloseModal();
+    }, function(err) {
+        alert("建立課程發生錯誤");
+    });
 }

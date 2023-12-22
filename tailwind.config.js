@@ -8,6 +8,9 @@ module.exports = {
       transitionProperty: {
         'height': 'height',
         'width': 'width'
+      },
+      fontFamily: {
+        custom: ['Noto Sans KR', 'sans-serif']
       }
     },
   },

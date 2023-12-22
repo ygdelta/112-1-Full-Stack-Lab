@@ -1,99 +1,107 @@
 <div id="gallery-main" class="flex flex-wrap content-start bg-slate-50 border-solid border-stone-300 h-full w-full">
     
 </div>
+<div id="btn-add-class" class="select-none text-5xl text-stone-50 bg-blue-600 fixed bottom-4 right-4 rounded-full shadow-md w-16 h-16 pl-[18px] pt-2 z-[48] hover:cursor-pointer hover:shadow-2xl hover:bg-blue-500">+</div>
 
 <script>
-    $(document).ready(function() {
-        console.log("Gallery.html test");
-        let main = $("#gallery-main");
-        $.ajax({
-            type: "GET",
-            url: "!/getclasses",
-            data: {},
-            dataType: "JSON",
-            success: function(res) {
-                res.forEach(function(element) {
-                    
-                });
-            },
-            error: function(err) {
-                let resTest = [
-                    {
-                        ID: 1,
-                        Name: "Linear",
-                        Subject: "Math",
-                        Teacher: "Teacher1"
+$(document).ready(function() {
+    console.log("Gallery.html test");
+    let main = $("#gallery-main");
+    $.ajax({
+        type: "GET",
+        url: "!/getclasses",
+        data: {},
+        dataType: "JSON",
+        success: function(res) {
+            res.forEach(function(element) {
+                
+            });
+        },
+        error: function(err) {
+            let resTest = [
+                {
+                    ID: 1,
+                    Name: "Linear",
+                    Subject: "Math",
+                    Teacher: "Teacher1"
+                },
+                {
+                    ID: 2,
+                    Name: "AI",
+                    Subject: "Math",
+                    Teacher: "Teacher2"
+                },
+                {
+                    ID: 3,
+                    Name: "AI",
+                    Subject: "Math",
+                    Teacher: "Teacher2"
+                },
+                {
+                    ID: 4,
+                    Name: "AI",
+                    Subject: "Math",
+                    Teacher: "Teacher2"
+                },
+                {
+                    ID: 5,
+                    Name: "AI",
+                    Subject: "Math",
+                    Teacher: "Teacher2"
+                },
+                {
+                    ID: 5,
+                    Name: "AI",
+                    Subject: "Math",
+                    Teacher: "Teacher2"
+                },
+                {
+                    ID: 5,
+                    Name: "AI",
+                    Subject: "Math",
+                    Teacher: "Teacher2"
+                },
+                {
+                    ID: 5,
+                    Name: "AI",
+                    Subject: "Math",
+                    Teacher: "Teacher2"
+                },
+                {
+                    ID: 5,
+                    Name: "AI",
+                    Subject: "Math",
+                    Teacher: "Teacher2"
+                },
+                {
+                    ID: 5,
+                    Name: "AI",
+                    Subject: "Math",
+                    Teacher: "Teacher2"
+                }
+            ];
+            resTest.forEach(function(element) {
+                $.ajax({
+                    type: "GET",
+                    url: components["classCard"],
+                    dataType: "text",
+                    success: function (res) {
+                        $.tmpl(res, element).appendTo(main);
                     },
-                    {
-                        ID: 2,
-                        Name: "AI",
-                        Subject: "Math",
-                        Teacher: "Teacher2"
-                    },
-                    {
-                        ID: 3,
-                        Name: "AI",
-                        Subject: "Math",
-                        Teacher: "Teacher2"
-                    },
-                    {
-                        ID: 4,
-                        Name: "AI",
-                        Subject: "Math",
-                        Teacher: "Teacher2"
-                    },
-                    {
-                        ID: 5,
-                        Name: "AI",
-                        Subject: "Math",
-                        Teacher: "Teacher2"
-                    },
-                    {
-                        ID: 5,
-                        Name: "AI",
-                        Subject: "Math",
-                        Teacher: "Teacher2"
-                    },
-                    {
-                        ID: 5,
-                        Name: "AI",
-                        Subject: "Math",
-                        Teacher: "Teacher2"
-                    },
-                    {
-                        ID: 5,
-                        Name: "AI",
-                        Subject: "Math",
-                        Teacher: "Teacher2"
-                    },
-                    {
-                        ID: 5,
-                        Name: "AI",
-                        Subject: "Math",
-                        Teacher: "Teacher2"
-                    },
-                    {
-                        ID: 5,
-                        Name: "AI",
-                        Subject: "Math",
-                        Teacher: "Teacher2"
+                    error: function(err) {
+                        alert("An Error Occurred!");
+                        console.log("Gallery.html -> line43");
                     }
-                ];
-                resTest.forEach(function(element) {
-                    $.ajax({
-                        type: "GET",
-                        url: components["classCard"],
-                        dataType: "text",
-                        success: function (res) {
-                            $.tmpl(res, element).appendTo(main);
-                        },
-                        error: function(err) {
-                            alert("An Error Occurred!");
-                            console.log("Gallery.html -> line43");
-                        }
-                    });
                 });
-            }
-        });
+            });
+        }
     });
+
+    $("#btn-add-class").on("click", function(e) {
+        if(userData.type === "student")
+            ShowModal({title: "加入課程", content: joinClassTemplate});
+        else if(userData.type === "teacher")
+            ShowModal({title: "建立課程", content: createClassTemplate});
+    })
+});
 </script>
