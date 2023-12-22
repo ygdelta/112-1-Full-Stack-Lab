@@ -12,7 +12,7 @@
         </svg>
         <p class="text-lg my-2 mx-2">${section.name}</p>
     </div>
-    <iframe class="w-[516px] h-[318px] m-2" src="https://www.youtube.com/embed/${section.videoID}" frameborder="0" allowfullscreen></iframe>  
+    <iframe class="w-[516px] h-[318px] m-2" src="https://www.youtube.com/embed/${section.videoID}?enablejsapi=1" frameborder="0" allowfullscreen></iframe>  
 </div>
 {{/each}}
 <!-- Sections -->
@@ -22,13 +22,22 @@
 function SectionOnClick(e) {
     let section = $(e.currentTarget);
     let allSections = $("div.section");
-    allSections.removeClass("h-[402px]");
-    allSections.data("isopened", false);
-    if(section.data("isopened"))      
+    if(section.data("isopened")) {
         section.data("isopened", false);
+        allSections.removeClass("h-[402px]");
+        allSections.data("isopened", false);
+    }
     else {
+        allSections.removeClass("h-[402px]");
+        allSections.data("isopened", false);
         section.data("isopened", true);
         section.addClass("h-[402px]");
+    }
+
+    /* 停止嵌入式畫面 */
+    let videoPlayer = $("iframe");
+    for(let i = 0; i < videoPlayer.length; i++) {
+        videoPlayer[i].contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*');
     }
 }
 </script>
