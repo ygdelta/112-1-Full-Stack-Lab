@@ -22,7 +22,6 @@
 function SectionOnClick(e) {
     let section = $(e.currentTarget);
     let allSections = $("div.section");
-    console.log(section);
     allSections.removeClass("h-[402px]");
     allSections.data("isopened", false);
     if(section.data("isopened"))      

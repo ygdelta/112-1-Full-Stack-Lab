@@ -117,7 +117,7 @@ $(document).ready(function() {
             /* 假設id為900 */
             alert("Error occured.");
             cardData.id = 900; 
-            $.tmpl(commentCard, cardData).appendTo("#discussion-container");
+            $.tmpl(commentCard, cardData).insertBefore($("#message-container").next());
         });
         $("#message").val("");
         messageOnClick({});

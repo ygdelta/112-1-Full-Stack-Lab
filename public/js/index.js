@@ -96,9 +96,18 @@ function FormatDate(date = new Date()) {
 }
 
 function SendComment(event) {
-    let idElement = $(event.currentTarget).parent().parent().children("p.message-area-id");
-    let id = idElement.text();
-    let comment = $(event.currentTarget).parent().children("input").val();
+    /* Initiallize here */
+    let id = $(event.currentTarget).parent().siblings("p.message-area-id").text();
+    let comment = $(event.currentTarget).next("input").val();
+    let prevComment = $(event.currentTarget).parent().prev();
+    let btnNumOfComments = $(event.currentTarget).parent().siblings("p[data-isopened]");
+    let NumOfComments = parseInt(btnNumOfComments.text().replace(/[^0-9]/g,""));
+
+    if(comment == "") {
+        alert("請輸入留言內容");
+        return;
+    }
+
     let data = {
         id: id,
         content: {
@@ -113,13 +122,14 @@ function SendComment(event) {
             '<img class="w-11 h-11" src="../../img/user.png">',
             '<div class="flex flex-col items-start">',
                 '<div class="flex flex-row items-start justify-center h-fit mx-3">',
-                    '<p class="text-sm font-bold">${content.user}</p>',
-                    '<p class="text-xs text-stone-400 mx-2">${content.date}</p>',
+                    '<p class="text-sm font-bold">${user}</p>',
+                    '<p class="text-xs text-stone-400 mx-2">${FormatDate(date)}</p>',
                 '</div>',           
-                '<p class="text-wrap text-left text-base mx-3">${content.comment}</p>',
+                '<p class="text-wrap text-left text-base mx-3">${comment}</p>',
             '</div>',
         '</div>'];
-
+    
+    /* Send comment data */
     $.ajax({
         type: "POST",
         url: "SendComment",
@@ -131,21 +141,13 @@ function SendComment(event) {
     }, function(err) {
         alert("Error occurred!");
         /* location.reload(); */
-        let comment = `<div class="comment flex items-start mt-4">
-            <img class="w-11 h-11" src="../../img/user.png">
-            <div class="flex flex-col items-start">
-                <div class="flex flex-row items-start justify-center h-fit mx-3">
-                    <p class="text-sm font-bold">${data.content.user}</p>
-                    <p class="text-xs text-stone-400 mx-2">${FormatDate(data.content.date)}</p>
-                </div>           
-                <p class="text-wrap text-left text-base mx-3">${data.content.comment}</p>
-            </div>
-        </div>`;
-        let comments = $("div.comment");
-        if(comments.length != 0)
-            $(comments[comments.length - 1]).addClass("hidden");
-        $(comment).appendTo(".message-area-main");
+        $.tmpl(commentTemplate.join(""), data.content).insertAfter(prevComment);
+        if(prevComment.hasClass("comment")) {
+            prevComment.removeClass("hidden");
+            prevComment.addClass("hidden");
+        }
+        btnNumOfComments.text(`${NumOfComments + 1}則留言`);
     });
 
-    $(event.currentTarget).parent().children("input").val("");
+    $(event.currentTarget).next("input").val("");
 }
