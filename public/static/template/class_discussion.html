@@ -8,11 +8,13 @@
 </div>
 <script>
 $(document).ready(function() { 
+    classId = $("#class-id").text();
+    console.log("classId: " + classId);
     /* Get discussion data */
     $.ajax({
         type: "POST",
         url: "url",
-        data: {},
+        data: {id: classId},
         dataType: "JSON"
     })
     .then(function(res) {

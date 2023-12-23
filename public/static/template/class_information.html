@@ -1,13 +1,21 @@
 <div id="class-content" class="w-3/5 text-center">
+    <p id="class-id" class="hidden">${}</p>
     <div id="chapter-content" class="flex flex-col h-auto p-4">
+        <div id="btn-add-chapter" onclick="ShowModal({title: '新增章節', content: createChapterTemplate})" class="text-center text-xl text-stone-400 border-dashed border border-stone-300 rounded-md w-full h-10 p-1 my-3 hover:cursor-pointer">新增章節</div>
     </div>
 </div>
 <script>
 $(document).ready(function() {
+    classId = $("#class-id").text();
+    console.log("classId: " + classId);
+
+    if(userData.type == "student")
+        $("#btn-add-chapter").addClass("hidden");
+
     $.ajax({
         type: "POST",
         url: "getChaptersAndSections",
-        data: {},
+        data: {id: classId},
         dataType: "JSON"
     })
     .then(function(res) {
@@ -17,38 +25,47 @@ $(document).ready(function() {
             data: [
                 {
                     chapter: "Chapter1",
+                    chapterId: 1,
                     section: [
                         {
                             name: "Section1-1",
+                            sectionId: 1,
                             videoID: "K1gbveCNlQs"
                         },
                         {
                             name: "Section1-2",
+                            sectionId: 2,
                             videoID: "K1gbveCNlQs"
                         },
                         {
                             name: "Section1-3",
+                            sectionId: 3,
                             videoID: "K1gbveCNlQs"
                         },
                         {
                             name: "Section1-4",
+                            sectionId: 4,
                             videoID: "K1gbveCNlQs"
                         },
                     ]
                 },
                 {
                     chapter: "Chapter2",
+                    chapterId: 2,
                     section: [
                         {
                             name: "Section2-1",
+                            sectionId: 5,
                             videoID: "HPvJRDergYM"
                         },
                         {
                             name: "Section2-2",
+                            sectionId: 6,
                             videoID: "HPvJRDergYM"
                         },
                         {
                             name: "Section2-3",
+                            sectionId: 7,
                             videoID: "HPvJRDergYM"
                         }
                     ]
@@ -62,9 +79,31 @@ $(document).ready(function() {
                 dataType: "text"
             })
             .then(function(res) {
-                $.tmpl(res, item).appendTo("#chapter-content");
+                $.tmpl(res, item).insertBefore("#btn-add-chapter");
             });
         });
     });
 });
+
+function OnSectionClick(e) {
+    let section = $(e.currentTarget);
+    let allSections = $("div.section");
+    if(section.data("isopened")) {
+        section.data("isopened", false);
+        allSections.removeClass("h-[402px]");
+        allSections.data("isopened", false);
+    }
+    else {
+        allSections.removeClass("h-[402px]");
+        allSections.data("isopened", false);
+        section.data("isopened", true);
+        section.addClass("h-[402px]");
+    }
+
+    /* 停止嵌入式畫面 */
+    let videoPlayer = $("iframe");
+    for(let i = 0; i < videoPlayer.length; i++) {
+        videoPlayer[i].contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*');
+    }
+}
 </script>
