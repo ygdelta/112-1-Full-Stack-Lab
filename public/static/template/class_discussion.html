@@ -102,22 +102,23 @@ $(document).ready(function() {
             success: function(res) {
                 commentCard = res; 
             },
-        });
-
-        /* Post data to server */
-        $.ajax({
+        })
+        .then(function(res) {
+            /* Post data to server */
+            $.ajax({
             type: "POST",
             url: "url",
             data: cardData,
             dataType: "JSON",
-        })
-        .then(function(res) {
-            /* cardData.id = res.data.id */
-        }, function(err) {
-            /* 假設id為900 */
-            alert("Error occured.");
-            cardData.id = 900; 
-            $.tmpl(commentCard, cardData).insertBefore($("#message-container").next());
+            })
+            .then(function(res) {
+                /* cardData.id = res.data.id */
+            }, function(err) {
+                /* 假設id為900 */
+                alert("Error occured.");
+                cardData.id = 900; 
+                $.tmpl(commentCard, cardData).insertBefore($("#message-container").next());
+            });
         });
         $("#message").val("");
         messageOnClick({});
