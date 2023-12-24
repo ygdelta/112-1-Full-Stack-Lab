@@ -13,7 +13,7 @@ const components = {
 
 let userData = {
     name: "testUser",
-    type: "student"
+    type: "teacher"
 };
 
 //<!--html-->
@@ -287,7 +287,7 @@ function OnCreateChapter(e) {
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
                     <div class="w-1 mx-2"></div>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline-block rounded-full w-6 h-6 hover:cursor-pointer hover:bg-stone-300">
+                    <svg onclick="OnDeleteChapter(event)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline-block rounded-full w-6 h-6 hover:cursor-pointer hover:bg-stone-300">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                     </svg>
                 </div>
@@ -310,7 +310,7 @@ function OnCreateChapter(e) {
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
                     <div class="w-1 mx-2"></div>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline-block rounded-full w-6 h-6 hover:cursor-pointer hover:bg-stone-300">
+                    <svg onclick="OnDeleteChapter(event)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline-block rounded-full w-6 h-6 hover:cursor-pointer hover:bg-stone-300">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                     </svg>
                 </div>
@@ -351,5 +351,39 @@ function OnCreateSection(e) {
         alert("新增小節發生錯誤");
         ShowPage("class/information", $("#class-content"));
         CloseModal();
+    });
+}
+
+function OnDeleteChapter(e) {
+    let chap = $(e.currentTarget).parent().prev().prev();
+    $.ajax({
+        type: "POST",
+        url: "DeleteChapter",
+        data: {id: chapterIdDom.text()},
+        dataType: "JSON",
+        success: function(res) {
+            chapterIdDom.parent().parent().remove();
+        },
+        error: function(err) {
+            alert("刪除章節發生錯誤");
+            chapterIdDom.parent().parent().remove();
+        }
+    });
+}
+
+function OnDeleteSection(e) {
+    let SectionIdDom = $(e.currentTarget).parent().prev();
+    $.ajax({
+        type: "POST",
+        url: "DeleteChapter",
+        data: {id: SectionIdDom.text()},
+        dataType: "JSON",
+        success: function(res) {
+            SectionIdDom.parent().remove();
+        },
+        error: function(err) {
+            alert("刪除章節發生錯誤");
+            SectionIdDom.parent().remove();
+        }
     });
 }
