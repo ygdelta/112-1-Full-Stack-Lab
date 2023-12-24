@@ -355,7 +355,7 @@ function OnCreateSection(e) {
 }
 
 function OnDeleteChapter(e) {
-    let chap = $(e.currentTarget).parent().prev().prev();
+    let chapterIdDom = $(e.currentTarget).parent().prev().prev();
     $.ajax({
         type: "POST",
         url: "DeleteChapter",
