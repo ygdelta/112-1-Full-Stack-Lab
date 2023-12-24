@@ -79,14 +79,12 @@ $(document).ready(function () {
         ReWriteCss(sidebar, "width", "64px");
     });
 
+    $("#user-name").text(userData.name);
+
     // Onclick Events
     // Open sidebar
-    $("#btn-login").on("click", function(e) {
+    $("#btn-logout").on("click", function(e) {
         window.location.href = "/login";
-    });
-
-    $("#btn-signup").on("click", function(e) {
-        window.location.href = "/register";
     });
 
     $("#sidebar-btn").on("click", function(e){
