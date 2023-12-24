@@ -1,7 +1,7 @@
 <div id="class-content" class="w-3/5 text-center">
     <p id="class-id" class="hidden">${}</p>
     <div id="chapter-content" class="flex flex-col h-auto p-4">
-        <div id="btn-add-chapter" onclick="ShowModal({title: '新增章節', content: createChapterTemplate})" class="text-center text-xl text-stone-400 border-dashed border border-stone-300 rounded-md w-full h-10 p-1 my-3 hover:cursor-pointer">新增章節</div>
+        <div id="btn-add-chapter" onclick="ShowModal({title: '新增章節', content: createChapterTemplate})" class="edit-nav text-center text-xl text-stone-400 border-dashed border border-stone-300 rounded-md w-full h-10 p-1 my-3 hover:cursor-pointer">新增章節</div>
     </div>
 </div>
 <script>
@@ -10,7 +10,7 @@ $(document).ready(function() {
     console.log("classId: " + classId);
 
     if(userData.type == "student")
-        $("#btn-add-chapter").addClass("hidden");
+        $(".edit-nav").addClass("hidden");
 
     $.ajax({
         type: "POST",
@@ -20,6 +20,9 @@ $(document).ready(function() {
     })
     .then(function(res) {
         /*Implement success function here*/
+        if(userData.type == "student")
+            $(".edit-nav").addClass("hidden");
+
     }, function(err) {
         let data = {
             data: [
@@ -79,7 +82,12 @@ $(document).ready(function() {
                 dataType: "text"
             })
             .then(function(res) {
-                $.tmpl(res, item).insertBefore("#btn-add-chapter");
+                let chapters = $.tmpl(res, item);
+                chapters.insertBefore("#btn-add-chapter");
+                chapters.ready(function() {
+                    if(userData.type == "student")
+                        $(".edit-nav").addClass("hidden");
+                });
             });
         });
     });

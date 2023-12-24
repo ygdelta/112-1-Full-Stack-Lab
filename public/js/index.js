@@ -13,7 +13,7 @@ const components = {
 
 let userData = {
     name: "testUser",
-    type: "teacher"
+    type: "student"
 };
 
 //<!--html-->
@@ -172,7 +172,7 @@ function SendComment(event) {
         }
     };
     
-    var commentTemplate = [
+    let commentTemplate = [
         '<div class="comment flex items-start mt-4">',
             '<img class="w-11 h-11" src="../../img/user.png">',
             '<div class="flex flex-col items-start">',
@@ -214,7 +214,7 @@ function ShowModal(setting = {
     let body = $("body");
 
     //<!--html-->
-    let template = `
+    let modal = `
     <div id="modal" class="fixed top-0 left-0 z-[49]">
         <div onclick="CloseModal()" class="fixed top-0 left-0 bg-gray-800 opacity-50 w-screen h-screen z-[49]"></div>
         <div class="flex flex-col fixed top-[calc(50%-150px)] left-[calc(50%-250px)] bg-stone-50 classic-border rounded-md w-[500px] h-[300px] z-50">
@@ -224,7 +224,7 @@ function ShowModal(setting = {
     </div>
     `;
     //<!--!html-->
-    $.tmpl(template, {}).appendTo(body);
+    $.tmpl(modal, {}).appendTo(body);
 }
 
 function CloseModal() {
@@ -284,7 +284,7 @@ function OnCreateChapter(e) {
             <div class="flex justify-between items-center border-solid border-blue-600 border-b w-full p-3">
                 <p class="hidden">${id}</p>
                 <div class="text-left text-3xl text-blue-600">${chapterName}</div>
-                <div class="flex h-fit w-fit">
+                <div class="edit-nav flex h-fit w-fit">
                     <svg onclick="ShowModal({title: '新增小節', content: createSectionTemplate})" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline-block rounded-full w-6 h-6 hover:cursor-pointer hover:bg-stone-300">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
@@ -307,7 +307,7 @@ function OnCreateChapter(e) {
             <div class="flex justify-between items-center border-solid border-blue-600 border-b w-full p-3">
                 <p class="hidden">testId</p>
                 <div class="text-left text-3xl text-blue-600">${chapterName}</div>
-                <div class="flex h-fit w-fit">
+                <div class="edit-nav flex h-fit w-fit">
                     <svg onclick="ShowModal({title: '新增小節', content: createSectionTemplate})" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline-block rounded-full w-6 h-6 hover:cursor-pointer hover:bg-stone-300">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
