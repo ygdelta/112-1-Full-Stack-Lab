@@ -106,9 +106,8 @@ app.use(bodyParser.json());
 
 app.post("/getclasses", function (req, res) {
   const ID = req.body.id;
-  const Role = req.body.role;
   var find_class;
-
+  //如果是學生身分 show 他修的課程 如果是老師 show他教的課程
   if(req.body.role=='Student'){
     find_class = `
     SELECT Class.ID, Class.Name as ClassName, Class.TeacherID as TeacherName
@@ -119,7 +118,6 @@ app.post("/getclasses", function (req, res) {
   `;
   }
   else if(req.body.role=='Teacher'){
-    // SQL查詢老師有哪些課
     find_class = `
     SELECT Class.ID, Class.Name as ClassName
     FROM User
@@ -129,8 +127,6 @@ app.post("/getclasses", function (req, res) {
   `;
   }
 
-  //console.log(req);
-  //const target = ID;
   var result = [];
   db.all(find_class, [ID], (err, rows) => {
     if (err) {
