@@ -15,76 +15,14 @@ $(document).ready(function() {
             id: "3" 
         },
         dataType: "JSON",
-        success: function(res) {
-            res.forEach(function(element) {
-                
-            });
-        },
-        error: function(err) {
-            /*
-            let resTest = [
-                {
-                    ID: 1,
-                    Name: "Linear",
-                    Subject: "Math",
-                    Teacher: "Teacher1"
-                },
-                {
-                    ID: 2,
-                    Name: "AI",
-                    Subject: "Math",
-                    Teacher: "Teacher2"
-                },
-                {
-                    ID: 3,
-                    Name: "AI",
-                    Subject: "Math",
-                    Teacher: "Teacher2"
-                },
-                {
-                    ID: 4,
-                    Name: "AI",
-                    Subject: "Math",
-                    Teacher: "Teacher2"
-                },
-                {
-                    ID: 5,
-                    Name: "AI",
-                    Subject: "Math",
-                    Teacher: "Teacher2"
-                },
-                {
-                    ID: 5,
-                    Name: "AI",
-                    Subject: "Math",
-                    Teacher: "Teacher2"
-                },
-                {
-                    ID: 5,
-                    Name: "AI",
-                    Subject: "Math",
-                    Teacher: "Teacher2"
-                },
-                {
-                    ID: 5,
-                    Name: "AI",
-                    Subject: "Math",
-                    Teacher: "Teacher2"
-                },
-                {
-                    ID: 5,
-                    Name: "AI",
-                    Subject: "Math",
-                    Teacher: "Teacher2"
-                },
-                {
-                    ID: 5,
-                    Name: "AI",
-                    Subject: "Math",
-                    Teacher: "Teacher2"
-                }
-            ];
-            resTest.forEach(function(element) {
+    })
+    .then(function(res) {
+        if(res.status == false) {
+            alert("取得資料發生錯誤");
+            return;
+        }
+        else {
+            res.data.forEach(function(element) {
                 $.ajax({
                     type: "GET",
                     url: components["classCard"],
@@ -93,13 +31,15 @@ $(document).ready(function() {
                         $.tmpl(res, element).appendTo(main);
                     },
                     error: function(err) {
-                        alert("An Error Occurred!");
-                        console.log("Gallery.html -> line43");
+                        console.log("Gallery.html 取得課程發生錯誤");
+                        alert("發生錯誤");
                     }
                 });
             });
-            */
         }
+    }, function(err) {
+        console.log("Gallery.html 取得課程發生錯誤");
+        alert("發生錯誤");
     });
 
     $("#btn-add-class").on("click", function(e) {
