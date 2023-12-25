@@ -8,11 +8,11 @@ $(document).ready(function() {
     console.log("Gallery.html test");
     let main = $("#gallery-main");
     $.ajax({
-        type: "GET",
-        url: "!/getclasses",
+        type: "POST",
+        url: "/getclasses",
         data: {
-            role: "teacher",
-            id: "4" 
+            role: "student",
+            id: "3" 
         },
         dataType: "JSON",
         success: function(res) {
@@ -21,6 +21,7 @@ $(document).ready(function() {
             });
         },
         error: function(err) {
+            /*
             let resTest = [
                 {
                     ID: 1,
@@ -97,6 +98,7 @@ $(document).ready(function() {
                     }
                 });
             });
+            */
         }
     });
 

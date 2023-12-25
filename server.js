@@ -4,9 +4,24 @@ const path = require("path");
 const express = require("express");
 const sqlite3 = require("sqlite3");
 var bodyParser = require('body-parser');
+//const jwt = require("jsonwebtoken");
 
 var db = new sqlite3.Database('db/test.db');
 const app = express();
+
+
+function generateUserToken(username) {
+  // 在這裡可以加入更多有關用戶的信息
+  const userInfo = {
+    username: username,
+    // 可以加入用戶的 ID 等其他信息
+  };
+
+  // 生成 token
+  const token = jwt.sign(userInfo, "your_secret_key", { expiresIn: "1h" });
+
+  return token;
+}
 
 // db.each('SELECT * FROM student', function (err, row) {
 //   if (err) return console.log(err.message);
@@ -15,13 +30,7 @@ const app = express();
 // db.close();
 /////////////////////////////12/21練習的領域(查詢)/////////////////////////////////////////
 // SQL查詢學生有哪些課
-const query = `
-    SELECT Class.ID, Class.Name as ClassName
-    FROM User
-    JOIN StoC_relation ON User.ID = StoC_relation.UserID
-    JOIN Class ON StoC_relation.ClassID = Class.ID
-    WHERE User.Name = ?;
-`;
+
 // SQL查詢課的老師是誰
 const query2 = `
     SELECT User.ID as TeacherID, User.Name as TeacherName, Class.Name as ClassName
@@ -36,6 +45,11 @@ const query3 = `
     JOIN TtoC_relation ON User.ID = TtoC_relation.TeacherID
     JOIN Class ON TtoC_relation.ClassID = Class.ID
     WHERE User.Name = ?;
+`;
+const find_account=`
+    SELECT User.Account
+    FROM User
+    WHERE User.Account = ?;
 `;
 //測試用
 const target = '蔡明誠';
@@ -97,16 +111,53 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.get("/getclasses", function (req, res) {
-  const ID = req.query.ID;
-  const Name = req.query.Name;
+app.post("/getclasses", function (req, res) {
+  const ID = req.body.id;
+  const Role = req.body.role;
+
+  const find_class = `
+    SELECT Class.ID, Class.Name as ClassName, Class.TeacherID as TeacherName
+    FROM User
+    JOIN StoC_relation ON User.ID = StoC_relation.UserID
+    JOIN Class ON StoC_relation.ClassID = Class.ID
+    WHERE User.ID = ?;
+  `;
+
+  /*console.log(req);
 
   console.log("Received data:");
   console.log("ID:", ID);
-  console.log("Name:", Name);
+  console.log("Role:", Role);
+  */
+  //const target = ID;
+  var result = [];
+  db.all(find_class, [ID], (err, rows) => {
+    if (err) {
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ 
+          status: false,
+          data: result
+        }));
+      throw err;
+    }
+  
+    // 處理查詢結果
+    console.log(`Information about User_id=${ID} :`);
+    rows.forEach(row => {
+      console.log(`Class ID: ${row.ID}, Class Name: ${row.ClassName}`);
+      result.push({
+        ID: row.ID, 
+        Name: row.ClassName
+      });
+    });   
 
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ 
+      status: true,
+      data: result
+    }));
+  });
   console.log("xxxxxxxxxxxxxxxxxxx");
-
 });
 
 app.post("/postdata", function (req, res) {
