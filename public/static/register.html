@@ -15,10 +15,12 @@
             <div class="transition-all ease-in duration-100 shrink-0 classic-border rounded-lg w-64 h-fit p-4">
                 <p class="select-none mt-2 mb-1 text-4xl font-semibold">註冊成為學生</p>
                 <form id="student-register" class="flex flex-col">
+                    <p class="">名字：</p>
+                    <input name="Name" type="text" class="classic-border mb-2 rounded-md">
                     <p class="">帳號：</p>
-                    <input name="username" type="text" class="classic-border mb-2 rounded-md">
+                    <input name="Account" type="text" class="classic-border mb-2 rounded-md">
                     <p class="">密碼：</p>
-                    <input name="password" type="password" class="classic-border mb-2 rounded-md">
+                    <input name="Password" type="password" class="classic-border mb-2 rounded-md">
                     <button id="btn-student-register" class="classic-border bg-blue-600 rounded-md my-2 hover:bg-blue-400">註冊</button>
                 </form>
                 <p id="href-teacher" class="text-blue-600 underline select-none my-2 hover:text-blue-800 hover:cursor-pointer">我要成為老師</p>
@@ -27,10 +29,12 @@
             <div class="transition-all ease-in duration-100 shrink-0 classic-border rounded-lg w-64 h-fit p-4">
                 <p class="select-none mt-2 mb-1 text-4xl font-semibold">註冊成為老師</p>
                 <form id="teacher-register" class="flex flex-col">
+                    <p class="">名字：</p>
+                    <input name="Name" type="text" class="classic-border mb-2 rounded-md">
                     <p class="">帳號：</p>
-                    <input name="username" type="text" class="classic-border mb-2 rounded-md">
+                    <input name="Account" type="text" class="classic-border mb-2 rounded-md">
                     <p class="">密碼：</p>
-                    <input name="password" type="password" class="classic-border mb-2 rounded-md">
+                    <input name="Password" type="password" class="classic-border mb-2 rounded-md">
                     <button id="btn-teacher-register" class="classic-border bg-blue-600 rounded-md my-2 hover:bg-blue-400">註冊</button>
                 </form>
                 <p id="href-student" class="text-blue-600 underline select-none my-2 hover:text-blue-800 hover:cursor-pointer">我要成為學生</p>
@@ -60,16 +64,22 @@ $(document).ready(function() {
     
     $("#btn-teacher-register").on("click", function(e) {
         e.preventDefault();
-        console.log($("#teacher-login").serialize());
+        console.log(JSON.parse(("#teacher-login").serialize()));
         $.ajax({
             type: "POST",
             url: "/teacherRegister",
             data: $("#teacher-register").serialize(),
             dataType: "JSON",
             success: function(res) {
-                window.location.href = "";
+                if(res.status == ture) {
+                    alert(res.message);
+                    window.location.href = "";
+                }
+                else {
+                    alert(res.message);
+                }
             },
-            error: function(er) {
+            error: function(err) {
                 alert("帳號申請發生錯誤");
             }
         });
@@ -77,14 +87,20 @@ $(document).ready(function() {
 
     $("#btn-student-register").on("click", function(e) {
         e.preventDefault();
-        console.log($("#student-login").serialize());
+        console.log($("#student-register").serialize());
         $.ajax({
             type: "POST",
             url: "/studentRegister",
             data: $("#student-register").serialize(),
             dataType: "JSON",
             success: function(res) {
-                window.location.href = "";
+                if(res.status == true) {
+                    alert(res.message);
+                    window.location.href = "";
+                }
+                else {
+                    alert(res.message);
+                }
             },
             error: function(er) {
                 alert("帳號申請發生錯誤");

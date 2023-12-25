@@ -222,7 +222,7 @@ app.post("/studentRegister", (req, res) => {
   const Account = req.body.Account;
   const Password = req.body.Password;
 
-  db.run(addNewUserQuery, ['Student', Name, Account, Password], function(err) {
+  db.run(add_newuser, ['Student', Name, Account, Password], function(err) {
     if (err) {
       res.status(500).json({ status: false, error: err.message });
       return;
