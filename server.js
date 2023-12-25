@@ -9,19 +9,10 @@ var bodyParser = require('body-parser');
 var db = new sqlite3.Database('db/test.db');
 const app = express();
 
-
-function generateUserToken(username) {
-  // 在這裡可以加入更多有關用戶的信息
-  const userInfo = {
-    username: username,
-    // 可以加入用戶的 ID 等其他信息
-  };
-
-  // 生成 token
-  const token = jwt.sign(userInfo, "your_secret_key", { expiresIn: "1h" });
-
+function GenerateUserToken(userData) {
+  const token = jwt.sign(userData, "secretKey", { expiresIn: "1h" });
   return token;
-}
+} 
 
 // db.each('SELECT * FROM student', function (err, row) {
 //   if (err) return console.log(err.message);
@@ -168,17 +159,26 @@ app.post("/postdata", function (req, res) {
   res.status(200).json({ message: "Data received successfully", receivedData: data });
 });
 
-app.post("/studentLogin", function(req, res) {
-  const Account = req.body.Account;
-  const Password = req.body.Password;
-  
+app.post("/StudentLogin", function(req, res) {
+  const queryParam = [req.body.Account, req.body.Password];
   const sql = `
-  SELECT 1
+  SELECT User.ID, User.Name, User.Role
   FROM User
   WHERE User.Account = ? and User.Password = ?;
   `;
 
-
+  db.all(sql, queryParam, function(err, rows) {
+    if(rows.length == 0) 
+      res.json({status: false, message: "帳號不存在或帳號密碼錯誤"});
+    else if(rows.length == 1) {
+      console.log(rows);
+      console.log(GenerateUserToken(rows[0]));
+      res.cookie("userData", GenerateUserToken(rows[0]));
+      res.json({status: true, message: "Success"});
+    }
+    else
+      res.status(500).send("server error");
+  });
 });
 
 app.get("/", function (req, res) {
@@ -238,7 +238,7 @@ app.post("/studentRegister", (req, res) => {
   //console.log(result);
   db.run(add_newuser, ['Student', Name, Account, Password], function(err) {
     if (err) {
-      res.status(500).json({ status: false, error: err.message });
+      res.status(200).json({ status: false, error: err.message });
       return;
     }
 
@@ -260,7 +260,7 @@ app.post("/teacherRegister", (req, res) => {
   //console.log(result);
   db.run(addNewUserQuery, ['Teacher', Name, Account, Password], function(err) {
     if (err) {
-      res.status(500).json({ status: false, error: err.message });
+      res.status(200).json({ status: false, error: err.message });
       return;
     }
 

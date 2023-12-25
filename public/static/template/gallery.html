@@ -11,8 +11,8 @@ $(document).ready(function() {
         type: "POST",
         url: "/getclasses",
         data: {
-            role: "student",
-            id: "3" 
+            role: userData.Role,
+            id: userData.ID 
         },
         dataType: "JSON",
     })
@@ -43,9 +43,9 @@ $(document).ready(function() {
     });
 
     $("#btn-add-class").on("click", function(e) {
-        if(userData.type === "student")
+        if(userData.Role === "Student")
             ShowModal({title: "加入課程", content: joinClassTemplate});
-        else if(userData.type === "teacher")
+        else if(userData.Role === "Teacher")
             ShowModal({title: "建立課程", content: createClassTemplate});
     })
 });

@@ -91,10 +91,9 @@ $(document).ready(function() {
         let commentCard;
         let cardData = {
             id: -1,
-            user: userData.name,
+            user: userData.Name,
             date: new Date(),
             content: $("#message").val(),
-            comment: []
         };
 
         $.ajax({

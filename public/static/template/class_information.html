@@ -9,7 +9,7 @@ $(document).ready(function() {
     classId = $("#class-id").text();
     console.log("classId: " + classId);
 
-    if(userData.type == "student")
+    if(userData.Role === "Student")
         $(".edit-nav").addClass("hidden");
 
     $.ajax({
@@ -20,7 +20,7 @@ $(document).ready(function() {
     })
     .then(function(res) {
         /*Implement success function here*/
-        if(userData.type == "student")
+        if(userData.Role === "Student")
             $(".edit-nav").addClass("hidden");
 
     }, function(err) {
@@ -85,7 +85,7 @@ $(document).ready(function() {
                 let chapters = $.tmpl(res, item);
                 chapters.insertBefore("#btn-add-chapter");
                 chapters.ready(function() {
-                    if(userData.type == "student")
+                    if(userData.Role === "Student")
                         $(".edit-nav").addClass("hidden");
                 });
             });

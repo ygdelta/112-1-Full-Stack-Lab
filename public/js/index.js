@@ -12,8 +12,9 @@ const components = {
 };
 
 let userData = {
-    name: "testUser",
-    type: "teacher"
+    ID: "",
+    Name: "",
+    Role: ""
 };
 
 //<!--html-->
@@ -59,7 +60,12 @@ const createSectionTemplate = `
 `;
 //<!--!html-->
 
+
 $(document).ready(function () {
+
+    // Initiallize user data.
+    Initiallize();
+
     $("#class-id").text("");
     let content = $("#content");
     let sidebar = $("#sidebar");
@@ -79,14 +85,18 @@ $(document).ready(function () {
         ReWriteCss(sidebar, "width", "64px");
     });
 
-    $("#user-name").text(userData.name);
+    $("#user-name").text(userData.Name);
 
     // Onclick Events
-    // Open sidebar
     $("#btn-logout").on("click", function(e) {
+        userData.ID = "";
+        userData.Name = "";
+        userData.Role = "";
+        $.removeCookie("userData");
         window.location.href = "/login";
     });
-
+    
+    // Open sidebar
     $("#sidebar-btn").on("click", function(e){
         if(sidebar.data("isOpen")) {
             sidebar.data("isOpen", false);
@@ -164,7 +174,7 @@ function SendComment(event) {
     let data = {
         id: id,
         content: {
-            user: userData.name,
+            user: userData.Name,
             comment: comment,
             date: new Date()
         }
@@ -386,4 +396,25 @@ function OnDeleteSection(e) {
             SectionIdDom.parent().remove();
         }
     });
+}
+
+function Initiallize() {
+    let cookieData = $.cookie("userData");
+    if(typeof cookieData == "undefined") {
+        alert("請先進行登入");
+        window.location.href = "/login";
+    }
+    let parseData = parseJwt(cookieData);
+    userData.ID = parseData.ID;
+    userData.Name = parseData.Name;
+    userData.Role = parseData.Role;
+}
+
+function parseJwt (token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
 }

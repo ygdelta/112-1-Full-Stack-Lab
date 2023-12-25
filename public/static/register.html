@@ -73,7 +73,7 @@ $(document).ready(function() {
             success: function(res) {
                 if(res.status == ture) {
                     alert(res.message);
-                    window.location.href = "";
+                    window.location.href = "/login";
                 }
                 else {
                     alert(res.message);
@@ -96,13 +96,13 @@ $(document).ready(function() {
             success: function(res) {
                 if(res.status == true) {
                     alert(res.message);
-                    window.location.href = "";
+                    window.location.href = "/login";
                 }
                 else {
                     alert(res.message);
                 }
             },
-            error: function(er) {
+            error: function(err) {
                 alert("帳號申請發生錯誤");
             }
         });

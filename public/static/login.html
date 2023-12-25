@@ -16,9 +16,9 @@
                 <p class="select-none mt-2 mb-1 text-4xl font-semibold">學生登錄</p>
                 <form id="student-login" class="flex flex-col">
                     <p class="">帳號：</p>
-                    <input name="username" type="text" class="classic-border mb-2 rounded-md">
+                    <input name="Account" type="text" class="classic-border mb-2 rounded-md">
                     <p class="">密碼：</p>
-                    <input name="password" type="password" class="classic-border mb-2 rounded-md">
+                    <input name="Password" type="password" class="classic-border mb-2 rounded-md">
                     <button id="btn-student-login" type="submit" class="classic-border bg-blue-600 rounded-md my-2 hover:bg-blue-400">登錄</button>
                 </form>
                 <p id="href-teacher" class="text-blue-600 underline select-none my-2 hover:text-blue-800 hover:cursor-pointer">我是老師</p>
@@ -28,9 +28,9 @@
                 <p class="select-none mt-2 mb-1 text-4xl font-semibold">老師登錄</p>
                 <form id="teacher-login" class="flex flex-col">
                     <p class="">帳號：</p>
-                    <input name="username" type="text" class="classic-border mb-2 rounded-md">
+                    <input name="Account" type="text" class="classic-border mb-2 rounded-md">
                     <p class="">密碼：</p>
-                    <input name="password" type="password" class="classic-border mb-2 rounded-md">
+                    <input name="Password" type="password" class="classic-border mb-2 rounded-md">
                     <button id="btn-teacher-login" type="submit" class="classic-border bg-blue-600 rounded-md my-2 hover:bg-blue-400">登錄</button>
                 </form>
                 <p id="href-student" class="text-blue-600 underline select-none my-2 hover:text-blue-800 hover:cursor-pointer">我是學生</p>
@@ -67,9 +67,14 @@ $(document).ready(function() {
             data: $("#student-login").serialize(),
             dataType: "JSON",
             success: function(res) {
-                window.location.href = "";
+                if(res.status) {
+                    window.location.href = "/";
+                }
+                else {
+                    alert(res.message);
+                }
             },
-            error: function(er) {
+            error: function(err) {
                 alert("帳號密碼錯誤");
             }
         });
