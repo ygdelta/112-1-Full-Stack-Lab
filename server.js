@@ -113,7 +113,7 @@ app.use(bodyParser.json());
 
 app.post("/getclasses", function (req, res) {
   const ID = req.body.id;
-  const Role = req.body.role;
+  //const Role = req.body.role;
 
   const find_class = `
     SELECT Class.ID, Class.Name as ClassName, Class.TeacherID as TeacherName
@@ -123,12 +123,7 @@ app.post("/getclasses", function (req, res) {
     WHERE User.ID = ?;
   `;
 
-  /*console.log(req);
-
-  console.log("Received data:");
-  console.log("ID:", ID);
-  console.log("Role:", Role);
-  */
+  //console.log(req);
   //const target = ID;
   var result = [];
   db.all(find_class, [ID], (err, rows) => {
@@ -157,7 +152,7 @@ app.post("/getclasses", function (req, res) {
       data: result
     }));
   });
-  console.log("xxxxxxxxxxxxxxxxxxx");
+  //console.log("xxxxxxxxxxxxxxxxxxx");
 });
 
 app.post("/postdata", function (req, res) {
@@ -215,6 +210,28 @@ app.get("/register", (req, res) => {
       res.status(200).send(data);
     }
   });
+});
+
+app.post("/studentRegister", (req, res) => {
+  const add_newuser=`
+    INSERT INTO User(Role, Name, Account, Password)
+    VALUES(?, ?, ?, ?)
+  `;
+  var result = [];
+  const Name = req.body.Name;
+  const Account = req.body.Account;
+  const Password = req.body.Password;
+
+  db.run(addNewUserQuery, ['Student', Name, Account, Password], function(err) {
+    if (err) {
+      res.status(500).json({ status: false, error: err.message });
+      return;
+    }
+
+    // 插入成功，回傳成功訊息
+    res.json({ status: true, message: 'User registered successfully.' });
+  });
+
 });
 
 const port = 8080;
