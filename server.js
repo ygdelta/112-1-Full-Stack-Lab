@@ -3,8 +3,8 @@ const fs = require("fs");
 const path = require("path");
 const express = require("express");
 const sqlite3 = require("sqlite3");
-const jwt = require("jsonwebtoken");
 var bodyParser = require('body-parser');
+//const jwt = require("jsonwebtoken");
 
 var db = new sqlite3.Database('db/test.db');
 const app = express();
@@ -53,7 +53,7 @@ db.all(query2, [target], (err, rows) => {
   }
 
   // 處理查詢結果
-  console.log(`Information about ${target} :`);
+  //console.log(`Information about ${target} :`);
   rows.forEach(row => {
     //console.log(`Class ID: ${row.ID}, Class Name: ${row.ClassName}`);
     //console.log(`Teacher ID: ${row.TeacherID}, Teacher Name: ${row.TeacherName}, Class Name: ${row.ClassName}`);
@@ -76,7 +76,7 @@ db.run(updateQuery, [newName, userIdToUpdate], function (err) {
   }
 
   // 這裡的 this.lastID 是最後一次插入的行的ID，這裡是更新，所以通常為更新的行數
-  console.log(`Update success: ${this.changes}`);
+  //console.log(`Update success: ${this.changes}`);
 
 });
 ////////////////////////////////資料庫刪除/////////////////////////////////////////////////////
@@ -93,7 +93,7 @@ db.run(deleteQuery, [classIdToDelete], function (err) {
   }
 
   // 這裡的 this.changes 是受影響的行數，通常為刪除的行數
-  console.log(`Delete success: ${this.changes}`);
+  //console.log(`Delete success: ${this.changes}`);
 });
 
 
@@ -103,6 +103,18 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+// app.post("/getdiscuss",function(req,res){
+//   var discuss_and_comments=`
+//     SELECT Class.ID, Class.Name as ClassName, Class.TeacherID as TeacherName
+//     FROM User
+//     JOIN StoC_relation ON User.ID = StoC_relation.UserID
+//     JOIN Class ON StoC_relation.ClassID = Class.ID
+//     WHERE User.ID = ?;
+//   `;
+
+
+// });
 
 app.post("/getclasses", function (req, res) {
   const ID = req.body.id;
@@ -157,29 +169,17 @@ app.post("/getclasses", function (req, res) {
   //console.log("xxxxxxxxxxxxxxxxxxx");
 });
 
-app.post("/postdata", function (req, res) {
-  // 從 request body 中獲取 JSON 數據
-  const data = req.body;
+// app.post("/postdata", function (req, res) {
+//   // 從 request body 中獲取 JSON 數據
+//   const data = req.body;
 
-  console.log("Received data:");
-  console.log(data);
+//   console.log("Received data:");
+//   console.log(data);
 
-  // 做其他處理或回傳回應
-  res.status(200).json({ message: "Data received successfully", receivedData: data });
-});
+//   // 做其他處理或回傳回應
+//   res.status(200).json({ message: "Data received successfully", receivedData: data });
+// });
 
-app.post("/studentLogin", function(req, res) {
-  const Account = req.body.Account;
-  const Password = req.body.Password;
-  
-  const sql = `
-  SELECT 1
-  FROM User
-  WHERE User.Account = ? and User.Password = ?;
-  `;
-
-
-});
 
 app.get("/", function (req, res) {
   // 讀取 index.html 的內容
@@ -226,7 +226,7 @@ app.get("/register", (req, res) => {
   });
 });
 
-app.post("/studentRegister", (req, res) => {
+app.post("/StudentRegister", (req, res) => {
   const add_newuser=`
     INSERT INTO User(Role, Name, Account, Password)
     VALUES(?, ?, ?, ?)
@@ -238,7 +238,7 @@ app.post("/studentRegister", (req, res) => {
   //console.log(result);
   db.run(add_newuser, ['Student', Name, Account, Password], function(err) {
     if (err) {
-      res.status(500).json({ status: false, error: err.message });
+      res.status(200).json({ status: false, error: err.message });
       return;
     }
 
@@ -248,7 +248,7 @@ app.post("/studentRegister", (req, res) => {
 
 });
 
-app.post("/teacherRegister", (req, res) => {
+app.post("/TeacherRegister", (req, res) => {
   const add_newuser=`
     INSERT INTO User(Role, Name, Account, Password)
     VALUES(?, ?, ?, ?)
@@ -260,7 +260,7 @@ app.post("/teacherRegister", (req, res) => {
   //console.log(result);
   db.run(addNewUserQuery, ['Teacher', Name, Account, Password], function(err) {
     if (err) {
-      res.status(500).json({ status: false, error: err.message });
+      res.status(200).json({ status: false, error: err.message });
       return;
     }
 
@@ -269,6 +269,121 @@ app.post("/teacherRegister", (req, res) => {
   });
 
 });
+
+app.post("/StudentJoinClass", (req, res) => {
+  const sjoinc=`
+    INSERT INTO StoC_relation(UserID,ClassID)
+    VALUES(?, ?)
+  `;
+
+  const studentID = req.body.UserID;
+  const ClassID = req.body.ClassID;
+
+  db.run(sjoinc, [studentID,ClassID], function(err) {
+    if (err) {
+      res.status(200).json({ status: false, error: err.message });
+      return;
+    }
+
+    // 插入成功，回傳成功訊息
+    res.json({ status: true, message: 'Student Join successfully.' });
+  });
+
+});
+
+app.post("/StudentExitClass", (req, res) => {
+  const sexitc=`
+    DELETE FROM StoC_relation
+    WHERE UserID=? AND ClassID=?
+  `;
+
+  const studentID = req.body.UserID;
+  const ClassID = req.body.ClassID;
+
+  db.run(sexitc, [studentID,ClassID], function(err) {
+    if (err) {
+      res.status(200).json({ status: false, error: err.message });
+      return;
+    }
+
+    // 插入成功，回傳成功訊息
+    res.json({ status: true, message: 'Student Join successfully.' });
+  });
+
+});
+
+app.post("/TeacherCreateClass", (req, res) => {
+  const classtab=`
+    INSERT INTO Class(Name,TeacherID)
+    VALUES(?, ?)
+  `;
+  const ttoc_class=`
+    INSERT INTO TtoC_relation(TeacherID,ClassName)
+    VALUES(?, ?)
+  `;
+
+  const ClassName = req.body.ClassName;
+  const TeacherID = req.body.TeacherID;
+
+  db.run(classtab, [ClassName,TeacherID], function(err) {
+    if (err) {
+      res.status(200).json({ status: false, error: err.message });
+      return;
+    }
+
+    // 插入成功，回傳成功訊息
+    //res.json({ status: true, message: 'Create class successfully.' });
+    db.run(ttoc_class, [TeacherID,ClassName], function(err) {
+      if (err) {
+        res.status(200).json({ status: false, error: err.message });
+        return;
+      }
+  
+      // 插入成功，回傳成功訊息
+      res.json({ status: true, message: 'Teacher connect Class successfully.' });
+    });
+
+  });
+
+});
+
+app.post("/TeacherDeleteClass", (req, res) => {
+  //記得加入確認該Class的TeacherID為目前登入身分的ID
+  const classtab=`
+    DELETE FROM Class
+    WHERE ID=?
+  `;
+  const ttoc_class=`
+    DELETE FROM TtoC_relation
+    WHERE TeacherID=? AND ClassName =?
+  `;
+
+  const ClassID = req.body.ClassID;
+  const TeacherID = req.body.TeacherID;
+  const ClassName = req.body.ClassName;
+
+  db.run(classtab, [ClassID], function(err) {
+    if (err) {
+      res.status(200).json({ status: false, error: err.message });
+      return;
+    }
+
+    // 插入成功，回傳成功訊息
+    //res.json({ status: true, message: 'Create class successfully.' });
+    db.run(ttoc_class, [TeacherID,ClassName], function(err) {
+      if (err) {
+        res.status(200).json({ status: false, error: err.message });
+        return;
+      }
+  
+      // 插入成功，回傳成功訊息
+      res.json({ status: true, message: 'Teacher delete Class successfully.' });
+    });
+
+  });
+
+});
+
 
 const port = 8080;
 const ip = "127.0.0.1";
