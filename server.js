@@ -38,14 +38,7 @@ const query2 = `
     JOIN User ON User.ID = Class.TeacherID
     WHERE Class.Name = ?;
 `;
-// SQL查詢老師有哪些課
-const query3 = `
-    SELECT User.ID as TeacherID, User.Name as TeacherName, Class.ID as ClassID, Class.Name as ClassName
-    FROM User
-    JOIN TtoC_relation ON User.ID = TtoC_relation.TeacherID
-    JOIN Class ON TtoC_relation.ClassID = Class.ID
-    WHERE User.Name = ?;
-`;
+
 const find_account=`
     SELECT User.Account
     FROM User
@@ -54,7 +47,7 @@ const find_account=`
 //測試用
 const target = '蔡明誠';
 // 執行查詢
-db.all(query3, [target], (err, rows) => {
+db.all(query2, [target], (err, rows) => {
   if (err) {
     throw err;
   }
@@ -113,15 +106,28 @@ app.use(bodyParser.json());
 
 app.post("/getclasses", function (req, res) {
   const ID = req.body.id;
-  //const Role = req.body.role;
+  const Role = req.body.role;
+  var find_class;
 
-  const find_class = `
+  if(req.body.role=='Student'){
+    find_class = `
     SELECT Class.ID, Class.Name as ClassName, Class.TeacherID as TeacherName
     FROM User
     JOIN StoC_relation ON User.ID = StoC_relation.UserID
     JOIN Class ON StoC_relation.ClassID = Class.ID
     WHERE User.ID = ?;
   `;
+  }
+  else if(req.body.role=='Teacher'){
+    // SQL查詢老師有哪些課
+    find_class = `
+    SELECT Class.ID, Class.Name as ClassName
+    FROM User
+    JOIN TtoC_relation ON User.ID = TtoC_relation.TeacherID
+    JOIN Class ON TtoC_relation.ClassID = Class.ID
+    WHERE User.ID = ?;
+  `;
+  }
 
   //console.log(req);
   //const target = ID;
