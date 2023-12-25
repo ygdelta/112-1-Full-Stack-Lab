@@ -38,14 +38,7 @@ const query2 = `
     JOIN User ON User.ID = Class.TeacherID
     WHERE Class.Name = ?;
 `;
-// SQL查詢老師有哪些課
-const query3 = `
-    SELECT User.ID as TeacherID, User.Name as TeacherName, Class.ID as ClassID, Class.Name as ClassName
-    FROM User
-    JOIN TtoC_relation ON User.ID = TtoC_relation.TeacherID
-    JOIN Class ON TtoC_relation.ClassID = Class.ID
-    WHERE User.Name = ?;
-`;
+
 const find_account=`
     SELECT User.Account
     FROM User
@@ -114,14 +107,25 @@ app.use(bodyParser.json());
 app.post("/getclasses", function (req, res) {
   const ID = req.body.id;
   //const Role = req.body.role;
-
-  const find_class = `
+  if(req.body.role=='Student'){
+    const find_class = `
     SELECT Class.ID, Class.Name as ClassName, Class.TeacherID as TeacherName
     FROM User
     JOIN StoC_relation ON User.ID = StoC_relation.UserID
     JOIN Class ON StoC_relation.ClassID = Class.ID
     WHERE User.ID = ?;
   `;
+  }
+  else if( req.body.role=='Teacher'){
+    // SQL查詢老師有哪些課
+    const find_class = `
+    SELECT User.ID as TeacherID, User.Name as TeacherName, Class.ID as ClassID, Class.Name as ClassName
+    FROM User
+    JOIN TtoC_relation ON User.ID = TtoC_relation.TeacherID
+    JOIN Class ON TtoC_relation.ClassID = Class.ID
+    WHERE User.ID = ?;
+`;
+  }
 
   //console.log(req);
   //const target = ID;
