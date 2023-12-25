@@ -4,7 +4,7 @@ const path = require("path");
 const express = require("express");
 const sqlite3 = require("sqlite3");
 var bodyParser = require('body-parser');
-//const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
 var db = new sqlite3.Database('db/test.db');
 const app = express();
@@ -270,6 +270,8 @@ app.post("/TeacherRegister", (req, res) => {
 
 });
 
+/////////////////////////////////////學生加入課程/退出 
+
 app.post("/StudentJoinClass", (req, res) => {
   const sjoinc=`
     INSERT INTO StoC_relation(UserID,ClassID)
@@ -312,6 +314,7 @@ app.post("/StudentExitClass", (req, res) => {
 
 });
 
+////////////////////////////////////////////老師創建課程/刪除
 app.post("/TeacherCreateClass", (req, res) => {
   const classtab=`
     INSERT INTO Class(Name,TeacherID)
@@ -378,6 +381,160 @@ app.post("/TeacherDeleteClass", (req, res) => {
   
       // 插入成功，回傳成功訊息
       res.json({ status: true, message: 'Teacher delete Class successfully.' });
+    });
+
+  });
+
+});
+//////////////////////////////////////////新增討論串/刪除
+app.post("/CreateDiscuss", (req, res) => {
+  const dicusstab=`
+    INSERT INTO Discuss(PublisherName,Context,Date)
+    VALUES(?, ?, ?)
+  `;
+  const ctodis_class=`
+    INSERT INTO CtoDis_relation(ClassID,DiscussID)
+    VALUES(?, ?)
+  `;
+
+  const PublisherName = req.body.PublisherName;
+  const Context = req.body.Context;
+  const ClassID = req.body.ClassID;
+  const Date = req.body.Date;
+
+
+  db.run(dicusstab, [PublisherName,Context,Date], function(err) {
+    if (err) {
+      res.status(200).json({ status: false, error: err.message });
+      return;
+    }
+
+    const DiscussID = this.lastID;
+
+    // 插入成功，回傳成功訊息
+    //res.json({ status: true, message: 'Create class successfully.' });
+    db.run(ctodis_class, [ClassID,DiscussID], function(err) {
+      if (err) {
+        res.status(200).json({ status: false, error: err.message });
+        return;
+      }
+  
+      // 插入成功，回傳成功訊息
+      res.json({ status: true, message: 'discuss create successfully.' });
+    });
+
+  });
+
+});
+
+app.post("/DeleteDiscuss", (req, res) => {
+  //記得加入確認該Class的TeacherID為目前登入身分的ID
+  const discusstab=`
+    DELETE FROM Discuss
+    WHERE ID=?
+  `;
+  const ctodis_class=`
+    DELETE FROM CtoDis_relation
+    WHERE ClassID=? AND DiscussID =?
+  `;
+
+  const DiscussID = req.body.DiscussID;
+  const ClassID = req.body.ClassID;
+
+  db.run(discusstab, [DiscussID], function(err) {
+    if (err) {
+      res.status(200).json({ status: false, error: err.message });
+      return;
+    }
+
+    // 插入成功，回傳成功訊息
+    //res.json({ status: true, message: 'Create class successfully.' });
+    db.run(ttoc_class, [ClassID,DiscussID], function(err) {
+      if (err) {
+        res.status(200).json({ status: false, error: err.message });
+        return;
+      }
+  
+      // 插入成功，回傳成功訊息
+      res.json({ status: true, message: 'discuss delete successfully.' });
+    });
+
+  });
+
+});
+
+///////////////////////////////////////加入留言/刪除
+
+app.post("/CreateComment", (req, res) => {
+  const commenttab=`
+    INSERT INTO Comments(PublisherName,Context,Date)
+    VALUES(?, ?, ?)
+  `;
+  const distocom_class=`
+    INSERT INTO DistoCom_relation(DisID,ComID)
+    VALUES(?, ?)
+  `;
+
+  const PublisherName = req.body.PublisherName;
+  const Context = req.body.Context;
+  const DiscussID = req.body.ClassID;
+  const Date=req.body.Date;
+
+
+  db.run(commenttab, [PublisherName,Context,Date], function(err) {
+    if (err) {
+      res.status(200).json({ status: false, error: err.message });
+      return;
+    }
+
+    const comID = this.lastID;
+
+    // 插入成功，回傳成功訊息
+    //res.json({ status: true, message: 'Create class successfully.' });
+    db.run(distocom_class, [DiscussID,comID], function(err) {
+      if (err) {
+        res.status(200).json({ status: false, error: err.message });
+        return;
+      }
+  
+      // 插入成功，回傳成功訊息
+      res.json({ status: true, message: 'comment successfully.' });
+    });
+
+  });
+
+});
+
+app.post("/DeleteComment", (req, res) => {
+  //記得加入確認該Class的TeacherID為目前登入身分的ID
+  const commenttab=`
+    DELETE FROM Discuss
+    WHERE ID=?
+  `;
+  const distocom_class=`
+    DELETE FROM CtoDis_relation
+    WHERE ClassID=? AND DiscussID =?
+  `;
+
+  const DiscussID = req.body.DiscussID;
+  const ClassID = req.body.ClassID;
+
+  db.run(commenttab, [DiscussID], function(err) {
+    if (err) {
+      res.status(200).json({ status: false, error: err.message });
+      return;
+    }
+
+    // 插入成功，回傳成功訊息
+    //res.json({ status: true, message: 'Create class successfully.' });
+    db.run(distocom_class, [ClassID,DiscussID], function(err) {
+      if (err) {
+        res.status(200).json({ status: false, error: err.message });
+        return;
+      }
+  
+      // 插入成功，回傳成功訊息
+      res.json({ status: true, message: 'comment delete successfully.' });
     });
 
   });
