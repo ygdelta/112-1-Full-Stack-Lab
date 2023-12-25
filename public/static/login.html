@@ -14,24 +14,24 @@
         <div class="flex items-start justify-start shadow-md rounded-lg overflow-hidden w-60 h-fit">
             <div class="transition-all ease-in duration-100 shrink-0 classic-border rounded-lg w-60 h-fit p-4">
                 <p class="select-none mt-2 mb-1 text-4xl font-semibold">學生登錄</p>
-                <form method="POST" action="/studentLogin" class="flex flex-col">
+                <form id="student-login" class="flex flex-col">
                     <p class="">帳號：</p>
-                    <input type="text" class="classic-border mb-2 rounded-md">
+                    <input name="username" type="text" class="classic-border mb-2 rounded-md">
                     <p class="">密碼：</p>
-                    <input type="password" class="classic-border mb-2 rounded-md">
-                    <button class="classic-border bg-blue-600 rounded-md my-2 hover:bg-blue-400">登錄</button>
+                    <input name="password" type="password" class="classic-border mb-2 rounded-md">
+                    <button id="btn-student-login" type="submit" class="classic-border bg-blue-600 rounded-md my-2 hover:bg-blue-400">登錄</button>
                 </form>
                 <p id="href-teacher" class="text-blue-600 underline select-none my-2 hover:text-blue-800 hover:cursor-pointer">我是老師</p>
                 <p class="text-blue-600 underline select-none hover:text-blue-800 hover:cursor-pointer go-register">前往註冊</p>
             </div>
             <div class="shrink-0 classic-border rounded-lg w-60 h-fit p-4">
                 <p class="select-none mt-2 mb-1 text-4xl font-semibold">老師登錄</p>
-                <form method="POST" action="/teacherLogin" class="flex flex-col">
+                <form id="teacher-login" class="flex flex-col">
                     <p class="">帳號：</p>
-                    <input type="text" class="classic-border mb-2 rounded-md">
+                    <input name="username" type="text" class="classic-border mb-2 rounded-md">
                     <p class="">密碼：</p>
-                    <input type="password" class="classic-border mb-2 rounded-md">
-                    <button class="classic-border bg-blue-600 rounded-md my-2 hover:bg-blue-400">登錄</button>
+                    <input name="password" type="password" class="classic-border mb-2 rounded-md">
+                    <button id="btn-teacher-login" type="submit" class="classic-border bg-blue-600 rounded-md my-2 hover:bg-blue-400">登錄</button>
                 </form>
                 <p id="href-student" class="text-blue-600 underline select-none my-2 hover:text-blue-800 hover:cursor-pointer">我是學生</p>
                 <p class="text-blue-600 underline select-none hover:text-blue-800 hover:cursor-pointer go-register">前往註冊</p>
@@ -55,8 +55,42 @@ $(document).ready(function() {
     });
 
     $("p.go-register").on("click", function(event) {
-            window.location.href = "http://localhost:8080/register";
+        window.location.href = "http://localhost:8080/register";
+    });
+
+    $("#btn-student-login").on("click", function(e) {
+        e.preventDefault();
+        console.log($("#student-login").serialize());
+        $.ajax({
+            type: "POST",
+            url: "/studentLogin",
+            data: $("#student-login").serialize(),
+            dataType: "JSON",
+            success: function(res) {
+                window.location.href = "";
+            },
+            error: function(er) {
+                alert("帳號密碼錯誤");
+            }
         });
+    });
+    
+    $("#btn-teacher-login").on("click", function(e) {
+        e.preventDefault();
+        console.log($("#teacher-login").serialize());
+        $.ajax({
+            type: "POST",
+            url: "/teacherLogin",
+            data: $("#teacher-login").serialize(),
+            dataType: "JSON",
+            success: function(res) {
+                window.location.href = "";
+            },
+            error: function(er) {
+                alert("帳號密碼錯誤");
+            }
+        });
+    });
 });
 </script>
 </html>

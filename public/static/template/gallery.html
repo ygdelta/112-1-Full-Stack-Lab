@@ -10,7 +10,10 @@ $(document).ready(function() {
     $.ajax({
         type: "GET",
         url: "!/getclasses",
-        data: {},
+        data: {
+            role: "teacher",
+            id: "4" 
+        },
         dataType: "JSON",
         success: function(res) {
             res.forEach(function(element) {

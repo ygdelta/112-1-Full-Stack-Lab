@@ -14,24 +14,24 @@
         <div class="flex items-start justify-start shadow-md rounded-lg overflow-hidden w-64 h-fit">
             <div class="transition-all ease-in duration-100 shrink-0 classic-border rounded-lg w-64 h-fit p-4">
                 <p class="select-none mt-2 mb-1 text-4xl font-semibold">註冊成為學生</p>
-                <form method="POST" action="/studentLogin" class="flex flex-col">
+                <form id="student-register" class="flex flex-col">
                     <p class="">帳號：</p>
-                    <input type="text" class="classic-border mb-2 rounded-md">
+                    <input name="username" type="text" class="classic-border mb-2 rounded-md">
                     <p class="">密碼：</p>
-                    <input type="password" class="classic-border mb-2 rounded-md">
-                    <button class="classic-border bg-blue-600 rounded-md my-2 hover:bg-blue-400">註冊</button>
+                    <input name="password" type="password" class="classic-border mb-2 rounded-md">
+                    <button id="btn-student-register" class="classic-border bg-blue-600 rounded-md my-2 hover:bg-blue-400">註冊</button>
                 </form>
                 <p id="href-teacher" class="text-blue-600 underline select-none my-2 hover:text-blue-800 hover:cursor-pointer">我要成為老師</p>
                 <p class="text-blue-600 underline select-none hover:text-blue-800 hover:cursor-pointer go-login">前往登入</p>
             </div>
             <div class="transition-all ease-in duration-100 shrink-0 classic-border rounded-lg w-64 h-fit p-4">
                 <p class="select-none mt-2 mb-1 text-4xl font-semibold">註冊成為老師</p>
-                <form method="POST" action="/studentLogin" class="flex flex-col">
+                <form id="teacher-register" class="flex flex-col">
                     <p class="">帳號：</p>
-                    <input type="text" class="classic-border mb-2 rounded-md">
+                    <input name="username" type="text" class="classic-border mb-2 rounded-md">
                     <p class="">密碼：</p>
-                    <input type="password" class="classic-border mb-2 rounded-md">
-                    <button class="classic-border bg-blue-600 rounded-md my-2 hover:bg-blue-400">註冊</button>
+                    <input name="password" type="password" class="classic-border mb-2 rounded-md">
+                    <button id="btn-teacher-register" class="classic-border bg-blue-600 rounded-md my-2 hover:bg-blue-400">註冊</button>
                 </form>
                 <p id="href-student" class="text-blue-600 underline select-none my-2 hover:text-blue-800 hover:cursor-pointer">我要成為學生</p>
                 <p class="text-blue-600 underline select-none hover:text-blue-800 hover:cursor-pointer go-login">前往登入</p>
@@ -40,23 +40,57 @@
     </div>
 </body>
 <script>
-    $(document).ready(function() {
-        $("#btn-register").on("click", function(event) {
-            event.preventDefault();
-            window.location.href = "http://localhost:8080/register";
-        });
+$(document).ready(function() {
+    $("#btn-register").on("click", function(event) {
+        event.preventDefault();
+        window.location.href = "http://localhost:8080/register";
+    });
     
-        $("#href-teacher").on("click", function(event) {
-            $("#href-teacher").parent().addClass("-ml-64");
-        });
+    $("#href-teacher").on("click", function(event) {
+        $("#href-teacher").parent().addClass("-ml-64");
+    });
     
-        $("#href-student").on("click", function(event) {
-            $("#href-teacher").parent().removeClass("-ml-64");
-        });
+    $("#href-student").on("click", function(event) {
+        $("#href-teacher").parent().removeClass("-ml-64");
+    });
 
-        $("p.go-login").on("click", function(event) {
-            window.location.href = "http://localhost:8080/login";
+    $("p.go-login").on("click", function(event) {
+        window.location.href = "http://localhost:8080/login";
+    });
+    
+    $("#btn-teacher-register").on("click", function(e) {
+        e.preventDefault();
+        console.log($("#teacher-login").serialize());
+        $.ajax({
+            type: "POST",
+            url: "/teacherRegister",
+            data: $("#teacher-register").serialize(),
+            dataType: "JSON",
+            success: function(res) {
+                window.location.href = "";
+            },
+            error: function(er) {
+                alert("帳號申請發生錯誤");
+            }
         });
     });
-    </script>
+
+    $("#btn-student-register").on("click", function(e) {
+        e.preventDefault();
+        console.log($("#student-login").serialize());
+        $.ajax({
+            type: "POST",
+            url: "/studentRegister",
+            data: $("#student-register").serialize(),
+            dataType: "JSON",
+            success: function(res) {
+                window.location.href = "";
+            },
+            error: function(er) {
+                alert("帳號申請發生錯誤");
+            }
+        });
+    });
+});
+</script>
 </html>
