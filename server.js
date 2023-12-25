@@ -3,8 +3,8 @@ const fs = require("fs");
 const path = require("path");
 const express = require("express");
 const sqlite3 = require("sqlite3");
+const jwt = require("jsonwebtoken");
 var bodyParser = require('body-parser');
-//const jwt = require("jsonwebtoken");
 
 var db = new sqlite3.Database('db/test.db');
 const app = express();
@@ -172,6 +172,18 @@ app.post("/postdata", function (req, res) {
   res.status(200).json({ message: "Data received successfully", receivedData: data });
 });
 
+app.post("/studentLogin", function(req, res) {
+  const Account = req.body.Account;
+  const Password = req.body.Password;
+  
+  const sql = `
+  SELECT 1
+  FROM User
+  WHERE User.Account = ? and User.Password = ?;
+  `;
+
+
+});
 
 app.get("/", function (req, res) {
   // 讀取 index.html 的內容
