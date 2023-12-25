@@ -217,12 +217,34 @@ app.post("/studentRegister", (req, res) => {
     INSERT INTO User(Role, Name, Account, Password)
     VALUES(?, ?, ?, ?)
   `;
-  var result = [];
+  //var result = [];
   const Name = req.body.Name;
   const Account = req.body.Account;
   const Password = req.body.Password;
+  //console.log(result);
+  db.run(add_newuser, ['Student', Name, Account, Password], function(err) {
+    if (err) {
+      res.status(500).json({ status: false, error: err.message });
+      return;
+    }
 
-  db.run(addNewUserQuery, ['Student', Name, Account, Password], function(err) {
+    // 插入成功，回傳成功訊息
+    res.json({ status: true, message: 'User registered successfully.' });
+  });
+
+});
+
+app.post("/teacherRegister", (req, res) => {
+  const add_newuser=`
+    INSERT INTO User(Role, Name, Account, Password)
+    VALUES(?, ?, ?, ?)
+  `;
+  //var result = [];
+  const Name = req.body.Name;
+  const Account = req.body.Account;
+  const Password = req.body.Password;
+  //console.log(result);
+  db.run(addNewUserQuery, ['Teacher', Name, Account, Password], function(err) {
     if (err) {
       res.status(500).json({ status: false, error: err.message });
       return;
