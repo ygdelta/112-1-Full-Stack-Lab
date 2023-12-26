@@ -185,7 +185,7 @@ app.post("/StudentLogin", function(req, res) {
     else if(rows.length == 1) {
       console.log(rows);
       console.log(GenerateUserToken(rows[0]));
-      res.cookie("userData", GenerateUserToken(rows[0]));
+      res.cookie("userData", GenerateUserToken(rows[0]), {maxAge: 3600000});
       res.json({status: true, message: "Success"});
     }
     else
