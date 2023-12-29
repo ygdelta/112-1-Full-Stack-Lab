@@ -47,10 +47,12 @@ $(document).ready(function() {
     });
 
     $("#href-teacher").on("click", function(event) {
+        $("form>input[type='text']").val("");
         $("#href-teacher").parent().addClass("-ml-60");
     });
 
     $("#href-student").on("click", function(event) {
+        $("form>input[type='text']").val("");
         $("#href-teacher").parent().removeClass("-ml-60");
     });
 
@@ -89,7 +91,7 @@ $(document).ready(function() {
             data: $("#teacher-login").serialize(),
             dataType: "JSON",
             success: function(res) {
-                window.location.href = "";
+                window.location.href = "/";
             },
             error: function(er) {
                 alert("帳號密碼錯誤");

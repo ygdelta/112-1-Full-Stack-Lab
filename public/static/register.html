@@ -51,10 +51,12 @@ $(document).ready(function() {
     });
     
     $("#href-teacher").on("click", function(event) {
+        $("form>input[type='text']").val("");
         $("#href-teacher").parent().addClass("-ml-64");
     });
     
     $("#href-student").on("click", function(event) {
+        $("form>input[type='text']").val("");
         $("#href-teacher").parent().removeClass("-ml-64");
     });
 
@@ -64,19 +66,18 @@ $(document).ready(function() {
     
     $("#btn-teacher-register").on("click", function(e) {
         e.preventDefault();
-        console.log(JSON.parse(("#teacher-login").serialize()));
         $.ajax({
             type: "POST",
             url: "/teacherRegister",
             data: $("#teacher-register").serialize(),
             dataType: "JSON",
             success: function(res) {
-                if(res.status == ture) {
+                if(res.status == true) {
                     alert(res.message);
                     window.location.href = "/login";
                 }
                 else {
-                    alert(res.message);
+                    alert(res.error);
                 }
             },
             error: function(err) {
@@ -87,7 +88,6 @@ $(document).ready(function() {
 
     $("#btn-student-register").on("click", function(e) {
         e.preventDefault();
-        console.log($("#student-register").serialize());
         $.ajax({
             type: "POST",
             url: "/studentRegister",
@@ -99,7 +99,7 @@ $(document).ready(function() {
                     window.location.href = "/login";
                 }
                 else {
-                    alert(res.message);
+                    alert(res.error);
                 }
             },
             error: function(err) {

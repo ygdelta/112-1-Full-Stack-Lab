@@ -176,7 +176,29 @@ app.post("/StudentLogin", function(req, res) {
   const sql = `
   SELECT User.ID, User.Name, User.Role
   FROM User
-  WHERE User.Account = ? and User.Password = ?;
+  WHERE User.Role = 'Student' and User.Account = ? and User.Password = ?;
+  `;
+
+  db.all(sql, queryParam, function(err, rows) {
+    if(rows.length == 0) 
+      res.json({status: false, message: "帳號不存在或帳號密碼錯誤"});
+    else if(rows.length == 1) {
+      console.log(rows);
+      console.log(GenerateUserToken(rows[0]));
+      res.cookie("userData", GenerateUserToken(rows[0]), {maxAge: 3600000});
+      res.json({status: true, message: "Success"});
+    }
+    else
+      res.status(500).send("server error");
+  });
+});
+
+app.post("/TeacherLogin", function(req, res) {
+  const queryParam = [req.body.Account, req.body.Password];
+  const sql = `
+  SELECT User.ID, User.Name, User.Role
+  FROM User
+  WHERE User.Role = 'Teacher' and User.Account = ? and User.Password = ?;
   `;
 
   db.all(sql, queryParam, function(err, rows) {
@@ -239,28 +261,41 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/StudentRegister", (req, res) => {
+  const checkUser = `
+  SELECT 1
+  FROM User
+  WHERE User.Role = 'Student' and User.Account = ?;
+  `;
   const add_newuser=`
     INSERT INTO User(Role, Name, Account, Password)
     VALUES(?, ?, ?, ?)
   `;
-  //var result = [];
   const Name = req.body.Name;
   const Account = req.body.Account;
   const Password = req.body.Password;
-  //console.log(result);
-  db.run(add_newuser, ['Student', Name, Account, Password], function(err) {
-    if (err) {
-      res.status(200).json({ status: false, error: err.message });
-      return;
+  db.all(checkUser, [Account], function(err, rows) {
+    if(rows.length != 0) {
+      res.status(200).json({status: false, error: "存在相同帳號"});
     }
-
-    // 插入成功，回傳成功訊息
-    res.json({ status: true, message: 'User registered successfully.' });
+    else {
+      db.run(add_newuser, ['Student', Name, Account, Password], function(err) {
+        if (err) {
+          res.status(200).json({ status: false, error: err.message });
+          return;
+        }
+        // 插入成功，回傳成功訊息
+        res.json({ status: true, message: 'User registered successfully.' });
+      });
+    }
   });
-
 });
 
 app.post("/TeacherRegister", (req, res) => {
+  const checkUser = `
+  SELECT 1
+  FROM User
+  WHERE User.Role = 'Teacher' and User.Account = ?;
+  `;
   const add_newuser=`
     INSERT INTO User(Role, Name, Account, Password)
     VALUES(?, ?, ?, ?)
@@ -270,16 +305,21 @@ app.post("/TeacherRegister", (req, res) => {
   const Account = req.body.Account;
   const Password = req.body.Password;
   //console.log(result);
-  db.run(addNewUserQuery, ['Teacher', Name, Account, Password], function(err) {
-    if (err) {
-      res.status(200).json({ status: false, error: err.message });
-      return;
+  db.all(checkUser, [Account], function(err, rows) {
+    if(rows.length != 0) {
+      res.status(200).json({status: false, error: "存在相同帳號"});
     }
-
-    // 插入成功，回傳成功訊息
-    res.json({ status: true, message: 'User registered successfully.' });
+    else {
+      db.run(addNewUserQuery, ['Teacher', Name, Account, Password], function(err) {
+        if (err) {
+          res.status(200).json({ status: false, error: err.message });
+          return;
+        }
+        // 插入成功，回傳成功訊息
+        res.json({ status: true, message: 'User registered successfully.' });
+      });
+    }
   });
-
 });
 
 /////////////////////////////////////學生加入課程/退出 
