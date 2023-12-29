@@ -359,7 +359,6 @@ app.post("/StudentExitClass", (req, res) => {
       res.status(200).json({ status: false, error: err.message });
       return;
     }
-
     // 插入成功，回傳成功訊息
     res.json({ status: true, message: 'Student Join successfully.' });
   });

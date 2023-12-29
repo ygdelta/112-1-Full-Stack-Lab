@@ -410,11 +410,64 @@ function Initiallize() {
     userData.Role = parseData.Role;
 }
 
-function parseJwt (token) {
+function parseJwt(token) {
     var base64Url = token.split('.')[1];
     var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
     return JSON.parse(jsonPayload);
+}
+
+function OnDeleteClass(e) {
+    let idDom = $(e.currentTarget)
+                    .parent()
+                    .prev()
+                    .children("p");
+    let id = idDom.text();
+    if(userData.Role == "Student") {
+        $.ajax({
+            type: "POST",
+            url: "url",
+            data: {},
+            dataType: "JSON",
+        })
+        .then(function(res) {
+            if(res.status == true) {
+                alert("刪除成功");
+                idDom.parent().parent().remove();
+            }
+            else {
+                alert(res.error);
+            }
+        }, function(err) {
+            alert(err);
+        });
+    }
+    else if(userData.Role == "Teacher") {
+        $.ajax({
+            type: "POST",
+            url: "url",
+            data: {},
+            dataType: "JSON",
+        })
+        .then(function(res) {
+            if(res.status == true) {
+                alert("刪除成功");
+                idDom.parent().parent().remove();
+            }
+            else {
+                alert(res.error);
+            }
+        }, function(err) {
+            alert(err);
+        });
+    }
+}
+
+function CardOnClick(e) {
+    let id = $(e.currentTarget).find("p#id");
+    $("#class-id").text(id.text());
+    alert(id.text());
+    ShowPage("class");
 }

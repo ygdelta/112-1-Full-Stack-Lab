@@ -5,7 +5,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@200&family=Noto+Sans+TC:wght@300&display=swap');
 
 .classic-border {
-    @apply border border-solid border-stone-300;
+  @apply border border-solid border-stone-300;
 }
 
 @layer base {

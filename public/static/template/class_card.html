@@ -1,15 +1,15 @@
-<div onclick="CardOnClick(event)" class="flex flex-col bg-slate-50 border-solid border-stone-300 border rounded-lg h-48 w-60 m-2 hover:cursor-pointer hover:shadow-lg">
-    <div class="bg-blue-600 w-full h-20 rounded-t-lg"></div>
-    <p id="id" hidden>${ID}</p>
-    <div class="flex flex-col p-2">
-        <p class="font-bold text-lg">${Name}</p>
+<div class="flex flex-col bg-slate-50 border-solid border-stone-300 border rounded-lg h-48 w-60 m-2 hover:cursor-pointer hover:shadow-lg">
+    <div onclick="CardOnClick(event)" class="flex flex-col w-full h-full">
+        <div class="bg-blue-600 w-full h-20 rounded-t-lg">
+        </div>
+        <p id="id" hidden>${ID}</p>
+        <div class="flex flex-col p-2">
+            <p class="font-bold text-lg">${Name}</p>
+        </div>
     </div>
-</div>
-<script>
-    function CardOnClick(e) {
-        let id = $(e.currentTarget).find("p#id");
-        $("#class-id").text(id.text());
-        alert(id.text());
-        ShowPage("class");
-    }
-</script>
+    <div class="border-t border-solid border-stone-300 text-right h-fit w-full p-1">
+        <svg onclick="OnDeleteClass(event)" class="inline-block rounded-full w-6 h-6 hover:cursor-pointer hover:bg-stone-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+    </div>
+</div>    
