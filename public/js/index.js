@@ -257,7 +257,16 @@ function OnJoinClass(e) {
     })
     .then(function(res) {
         if(res.status == true) 
-            $.tmpl(components["classCard"], res.data).appendTo("#gallery-main");
+            $.ajax({
+                type: "GET",
+                url: components["classCard"],
+                dataType: "text"
+            })
+            .then(function(template) {
+                $.tmpl(template, res.data).appendTo("#gallery-main");
+            }, function(err) {
+                console.log(err);
+            });
         else 
             alert("加入課程發生錯誤");
         CloseModal();
@@ -286,7 +295,16 @@ function OnCreateClass(e) {
     })
     .then(function(res) {
         if(res.status == true) 
-            $.tmpl(components["classCard"], res.data).appendTo("#gallery-main");
+            $.ajax({
+                type: "GET",
+                url: components["classCard"],
+                dataType: "text"
+            })
+            .then(function(template) {
+                $.tmpl(template, res.data).appendTo("#gallery-main");
+            }, function(err) {
+                console.log(err);
+            });
         else 
             alert("建立課程發生錯誤");
         CloseModal();
