@@ -329,6 +329,9 @@ app.post("/StudentJoinClass", (req, res) => {
     INSERT INTO StoC_relation(UserID,ClassID)
     VALUES(?, ?)
   `;
+  const selectClass = `
+    SELECT ID, Name FROM Class WHERE ID = ?
+  `;
 
   const studentID = req.body.UserID;
   const ClassID = req.body.ClassID;
@@ -340,9 +343,28 @@ app.post("/StudentJoinClass", (req, res) => {
     }
 
     // 插入成功，回傳成功訊息
-    res.json({ status: true, message: 'Student Join successfully.' });
-  });
+    db.get(selectClass, [ClassID], function (err, row) {
+      if (err) {
+        res.status(200).json({ status: false, error: err.message });
+        return;
+      }
 
+      if (!row) {
+        res.status(200).json({ status: false, error: "Class not found." });
+        return;
+      }
+
+      // 回傳成功訊息及課程資訊
+      res.json({
+        status: true,
+        data: {
+          ID: row.ID,
+          Name: row.Name,
+        },
+        message: 'Student Join successfully.',
+      });
+    });
+  });
 });
 
 app.post("/StudentExitClass", (req, res) => {
@@ -360,46 +382,68 @@ app.post("/StudentExitClass", (req, res) => {
       return;
     }
     // 插入成功，回傳成功訊息
-    res.json({ status: true, message: 'Student Join successfully.' });
+    res.json({ status: true, message: 'Student Exit successfully.' });
   });
 
 });
 
 ////////////////////////////////////////////老師創建課程/刪除
 app.post("/TeacherCreateClass", (req, res) => {
-  const classtab=`
+  const classtab = `
     INSERT INTO Class(Name,TeacherID)
     VALUES(?, ?)
   `;
-  const ttoc_class=`
-    INSERT INTO TtoC_relation(TeacherID,ClassName)
+  const ttoc_class = `
+    INSERT INTO TtoC_relation(TeacherID, ClassName)
     VALUES(?, ?)
+  `;
+
+  const selectClass = `
+    SELECT ID, Name FROM Class WHERE ID = (SELECT last_insert_rowid())
   `;
 
   const ClassName = req.body.ClassName;
   const TeacherID = req.body.TeacherID;
 
-  db.run(classtab, [ClassName,TeacherID], function(err) {
+  db.run(classtab, [ClassName, TeacherID], function (err) {
     if (err) {
       res.status(200).json({ status: false, error: err.message });
       return;
     }
 
     // 插入成功，回傳成功訊息
-    //res.json({ status: true, message: 'Create class successfully.' });
-    db.run(ttoc_class, [TeacherID,ClassName], function(err) {
+    db.run(ttoc_class, [TeacherID, ClassName], function (err) {
       if (err) {
         res.status(200).json({ status: false, error: err.message });
         return;
       }
-  
-      // 插入成功，回傳成功訊息
-      res.json({ status: true, message: 'Teacher connect Class successfully.' });
+
+      // 插入成功，查詢課程資訊
+      db.get(selectClass, [], function (err, row) {
+        if (err) {
+          res.status(200).json({ status: false, error: err.message });
+          return;
+        }
+
+        if (!row) {
+          res.status(200).json({ status: false, error: "Class not found." });
+          return;
+        }
+
+        // 回傳成功訊息及課程資訊
+        res.json({
+          status: true,
+          data: {
+            ID: row.ID,
+            Name: row.Name,
+          },
+          message: 'Teacher connect Class successfully.',
+        });
+      });
     });
-
   });
-
 });
+
 
 app.post("/TeacherDeleteClass", (req, res) => {
   //記得加入確認該Class的TeacherID為目前登入身分的ID
