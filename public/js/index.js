@@ -241,34 +241,58 @@ function CloseModal() {
 
 function OnJoinClass(e) {
     let input = $(e.currentTarget).prev().val();
+    if(userData.Role != "Student") {
+        console.log("發生錯誤");
+        return;
+    }
+    let payload = {
+        UserID: userData.ID,
+        ClassID: input
+    };
     $.ajax({
         type: "POST",
-        url: "joinClass",
-        data: {id: input},
+        url: "/StudentJoinClass",
+        data: payload,
         dataType: "JSON"
     })
     .then(function(res) {
-        // Do something.
+        if(res.status == true) 
+            $.tmpl(components["classCard"], res.data).appendTo("#gallery-main");
+        else 
+            alert("加入課程發生錯誤");
         CloseModal();
     }, function(err) {
         alert("加入課程發生錯誤");
-
+        console.log(err);
+        CloseModal();
     });
 }
 
 function OnCreateClass(e) {
     let input = $(e.currentTarget).prev().val();
+    if(userData.Role != "Teacher") {
+        console.log("發生錯誤");
+        return;
+    }
+    let payload = {
+        UserID: userData.ID,
+        ClassName: input
+    }
     $.ajax({
         type: "POST",
-        url: "createClass",
-        data: {className: input},
+        url: "/TeacherCreateClass",
+        data: payload,
         dataType: "JSON",
     })
     .then(function(res) {
-        // Do something.
+        if(res.status == true) 
+            $.tmpl(components["classCard"], res.data).appendTo("#gallery-main");
+        else 
+            alert("建立課程發生錯誤");
         CloseModal();
     }, function(err) {
         alert("建立課程發生錯誤");
+        console.log(err);
     });
 }
 
@@ -425,11 +449,15 @@ function OnDeleteClass(e) {
                     .prev()
                     .children("p");
     let id = idDom.text();
+    let payload = {
+        UserID: userData.ID,
+        ClassID: id
+    };
     if(userData.Role == "Student") {
         $.ajax({
             type: "POST",
-            url: "url",
-            data: {},
+            url: "/StudentExitClass",
+            data: payload,
             dataType: "JSON",
         })
         .then(function(res) {
@@ -447,8 +475,8 @@ function OnDeleteClass(e) {
     else if(userData.Role == "Teacher") {
         $.ajax({
             type: "POST",
-            url: "url",
-            data: {},
+            url: "/TeacherDeleteClass",
+            data: payload,
             dataType: "JSON",
         })
         .then(function(res) {

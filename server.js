@@ -413,7 +413,7 @@ app.post("/TeacherDeleteClass", (req, res) => {
   `;
 
   const ClassID = req.body.ClassID;
-  const TeacherID = req.body.TeacherID;
+  const TeacherID = req.body.UserID;
   const ClassName = req.body.ClassName;
 
   db.run(classtab, [ClassID], function(err) {
@@ -433,9 +433,7 @@ app.post("/TeacherDeleteClass", (req, res) => {
       // 插入成功，回傳成功訊息
       res.json({ status: true, message: 'Teacher delete Class successfully.' });
     });
-
   });
-
 });
 //////////////////////////////////////////新增討論串/刪除
 app.post("/CreateDiscuss", (req, res) => {
