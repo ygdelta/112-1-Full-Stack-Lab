@@ -412,7 +412,8 @@ app.post("/TeacherCreateClass", (req, res) => {
     }
 
     // 插入成功，回傳成功訊息
-    db.run(ttoc_class, [TeacherID, ClassName], function (err) {
+    db.get(selectClass, [], function (err, row) {
+      console.log(row);
       if (err) {
         res.status(200).json({ status: false, error: err.message });
         return;
@@ -424,7 +425,7 @@ app.post("/TeacherCreateClass", (req, res) => {
       }
 
       // 插入成功，回傳成功訊息
-      db.run(ttoc_class, [TeacherID, row.ID], function (err) {
+      db.run(teacher_to_class, [TeacherID, row.ID], function (err) {
         if (err) {
           res.status(200).json({ status: false, error: err.message });
           return;
