@@ -821,6 +821,7 @@ app.post("/DeleteComment", (req, res) => {
 
 });
 
+///////////////////////////////////////查詢課程中的章節與小節
 app.post("/GetClassInformation", (req, res) => {
   const classId = req.body.classId;
   const queryChapter = `
