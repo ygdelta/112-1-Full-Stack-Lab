@@ -387,7 +387,7 @@ app.post("/StudentExitClass", (req, res) => {
 
 });
 
-////////////////////////////////////////////老師創建課程/刪除
+////////////////////////////////////////////老師對課程的創建/刪除
 app.post("/TeacherCreateClass", (req, res) => {
   const classtab = `
     INSERT INTO Class(Name,TeacherID)
@@ -480,6 +480,192 @@ app.post("/TeacherDeleteClass", (req, res) => {
     });
   });
 });
+////////////////////////////////////////////老師在課程中章節的創建/刪除
+app.post("/TeacherCreateChapter", (req, res) => {
+  const chaptertab = `
+    INSERT INTO Chapter(Name,ClassID)
+    VALUES(?, ?)
+  `;
+  const class_to_chapter = `
+    INSERT INTO Class_to_Chapter_relation(ClassID, ChapterID)
+    VALUES(?, ?)
+  `;
+
+  const selectChapter = `
+    SELECT ID, Name FROM Chapter WHERE ID = (SELECT last_insert_rowid())
+  `;
+
+  const ChapterName = req.body.ChapterName;
+  const ClassID = req.body.ClassID;
+
+  db.run(chaptertab, [ChapterName, ClassID], function (err) {
+    if (err) {
+      res.status(200).json({ status: false, error: err.message });
+      return;
+    }
+
+    // 插入成功，回傳成功訊息
+    db.get(selectChapter, [], function (err, row) {
+      console.log(row);
+      if (err) {
+        res.status(200).json({ status: false, error: err.message });
+        return;
+      }
+
+      if (!row) {
+        res.status(200).json({ status: false, error: "Chapter not found." });
+        return;
+      }
+
+      // 插入成功，回傳成功訊息
+      db.run(class_to_chapter, [TeacherID, row.ID], function (err) {
+        if (err) {
+          res.status(200).json({ status: false, error: err.message });
+          return;
+        }
+
+        // 回傳成功訊息及課程資訊
+        res.json({
+          status: true,
+          data: {
+            ID: row.ID,
+            Name: row.Name,
+          },
+          message: 'class create and connect Chapter successfully.',
+        });
+      });
+    });
+  });
+});
+
+app.post("/TeacherDeleteChapter", (req, res) => {
+  //記得加入確認該Class的TeacherID為目前登入身分的ID
+  const chaptertab=`
+    DELETE FROM Chapter
+    WHERE ID=?
+  `;
+  const class_to_chapter=`
+    DELETE FROM Class_to_Chapter_relation
+    WHERE ClassID=? AND ChapterID =?
+  `;
+
+  const ChapterID = req.body.ChpaterID;
+  const ClassID = req.body.ClassID;
+  //const ClassName = req.body.ClassName;
+
+  db.run(chaptertab, [ClassID], function(err) {
+    if (err) {
+      res.status(200).json({ status: false, error: err.message });
+      return;
+    }
+
+    // 插入成功，回傳成功訊息
+    //res.json({ status: true, message: 'Create class successfully.' });
+    db.run(class_to_chapter, [ClassID,ChapterID], function(err) {
+      if (err) {
+        res.status(200).json({ status: false, error: err.message });
+        return;
+      }
+  
+      // 插入成功，回傳成功訊息
+      res.json({ status: true, message: 'Teacher delete Chpater successfully.' });
+    });
+  });
+});
+/////////////////////////////////////////////////////章節中的section創建/刪除
+app.post("/TeacherCreateSection", (req, res) => {
+  const sectiontab = `
+    INSERT INTO Section(Name,VideoID)
+    VALUES(?, ?)
+  `;
+  const chapter_to_section = `
+    INSERT INTO Chapter_to_Section_relation(ChapterID, SectionID)
+    VALUES(?, ?)
+  `;
+
+  const selectSection = `
+    SELECT ID, Name FROM Section WHERE ID = (SELECT last_insert_rowid())
+  `;
+
+  const SectionName = req.body.SectionName;
+  const VideoID = req.body.VideoID;
+
+  db.run(sectiontab, [SectionName, VideoID], function (err) {
+    if (err) {
+      res.status(200).json({ status: false, error: err.message });
+      return;
+    }
+
+    // 插入成功，回傳成功訊息
+    db.get(selectSection, [], function (err, row) {
+      console.log(row);
+      if (err) {
+        res.status(200).json({ status: false, error: err.message });
+        return;
+      }
+
+      if (!row) {
+        res.status(200).json({ status: false, error: "Section not found." });
+        return;
+      }
+
+      // 插入成功，回傳成功訊息
+      db.run(chapter_to_section, [TeacherID, row.ID], function (err) {
+        if (err) {
+          res.status(200).json({ status: false, error: err.message });
+          return;
+        }
+
+        // 回傳成功訊息及課程資訊
+        res.json({
+          status: true,
+          data: {
+            ID: row.ID,
+            Name: row.Name,
+          },
+          message: 'Chapter create and connect Section successfully.',
+        });
+      });
+    });
+  });
+});
+
+app.post("/TeacherDeleteSection", (req, res) => {
+  //記得加入確認該Class的TeacherID為目前登入身分的ID
+  const sectiontab=`
+    DELETE FROM Section
+    WHERE ID=?
+  `;
+  const chapter_to_section=`
+    DELETE FROM Chapter_to_Section_relation
+    WHERE ChapterID=? AND SectionID =?
+  `;
+
+  const SectionID = req.body.SectionID;
+  const ChapterID = req.body.ChapterID;
+  //const ClassName = req.body.ClassName;
+
+  db.run(sectiontab, [SectionID], function(err) {
+    if (err) {
+      res.status(200).json({ status: false, error: err.message });
+      return;
+    }
+
+    // 插入成功，回傳成功訊息
+    //res.json({ status: true, message: 'Create class successfully.' });
+    db.run(chapter_to_section, [ChapterID,SectionID], function(err) {
+      if (err) {
+        res.status(200).json({ status: false, error: err.message });
+        return;
+      }
+  
+      // 插入成功，回傳成功訊息
+      res.json({ status: true, message: 'Teacher delete Section successfully.' });
+    });
+  });
+});
+
+
 //////////////////////////////////////////新增討論串/刪除
 app.post("/CreateDiscuss", (req, res) => {
   const dicusstab=`
