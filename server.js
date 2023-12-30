@@ -635,6 +635,57 @@ app.post("/DeleteComment", (req, res) => {
 
 });
 
+app.post("/GetClassInformation", (req, res) => {
+  const classId = req.body.classId;
+  const queryChapter = `
+  SELECT Chapter.ID, Chapter.Name
+  FROM Chapter 
+  WHERE Chapter.ClassID = ?;
+  `;
+  const querySection = `
+  SELECT Section.ID, Section.Name, Section.VideoID
+  FROM Section JOIN Chapter_to_Section_relation AS C_TO_S ON Section.ID = C_TO_S.SectionID
+  WHERE C_TO_S.ChapterID = ?;
+  `;
+  let result = [];
+  db.all(queryChapter, [classId], function(err, rows) {
+
+    if (err) {
+      res.status(200).json({ status: false, error: err.message });
+      return;
+    }
+
+    rows.forEach(function(row) {
+      let section = [];
+      db.all(querySection, [row.ID], function(err, sections) {
+
+        if (err) {
+          res.status(200).json({ status: false, error: err.message });
+          return;
+        }
+
+        sections.forEach(function(i) {
+          let sectionData = {
+            name: i.Name,
+            sectionId: i.ID,
+            videoID: i.VideoID
+          };
+          section.push(sectionData);
+        });
+      });
+
+      let chapter = {
+        chapter: row.Name,
+        chapterId: ID,
+        section: section
+      };
+
+      result.push(chapter); 
+    });
+    console.log(result);
+    res.status(200).json({status: true, data: result});
+  });
+});
 
 const port = 8080;
 const ip = "127.0.0.1";

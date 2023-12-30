@@ -15,7 +15,7 @@ $(document).ready(function() {
     $.ajax({
         type: "POST",
         url: "getChaptersAndSections",
-        data: {id: classId},
+        data: {classId: classId},
         dataType: "JSON"
     })
     .then(function(res) {
