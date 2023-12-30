@@ -284,7 +284,7 @@ function OnCreateClass(e) {
         return;
     }
     let payload = {
-        UserID: userData.ID,
+        TeacherID: userData.ID,
         ClassName: input
     }
     $.ajax({

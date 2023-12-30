@@ -52,11 +52,13 @@ $(document).ready(function() {
     
     $("#href-teacher").on("click", function(event) {
         $("form>input[type='text']").val("");
+        $("form>input[type='password']").val("");
         $("#href-teacher").parent().addClass("-ml-64");
     });
     
     $("#href-student").on("click", function(event) {
         $("form>input[type='text']").val("");
+        $("form>input[type='password']").val("");
         $("#href-teacher").parent().removeClass("-ml-64");
     });
 

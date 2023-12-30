@@ -6,14 +6,10 @@ Return: {
         {
             ID: 1,
             Name: "Linear",
-            Subject: "Math",
-            Teacher: "Teacher1"
         },
         {
             ID: 2,
             Name: "AI",
-            Subject: "Math",
-            Teacher: "Teacher2"
         }
     ]
 }
