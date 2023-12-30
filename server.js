@@ -115,8 +115,8 @@ app.post("/getclasses", function (req, res) {
     find_class = `
     SELECT Class.ID, Class.Name as ClassName, Class.TeacherID as TeacherName
     FROM User
-    JOIN StoC_relation ON User.ID = StoC_relation.UserID
-    JOIN Class ON StoC_relation.ClassID = Class.ID
+    JOIN Student_to_Class_relation ON User.ID = Student_to_Class_relation.UserID
+    JOIN Class ON Student_to_Class_relation.ClassID = Class.ID
     WHERE User.ID = ?;
   `;
   }
@@ -124,8 +124,8 @@ app.post("/getclasses", function (req, res) {
     find_class = `
     SELECT Class.ID, Class.Name as ClassName
     FROM User
-    JOIN TtoC_relation ON User.ID = TtoC_relation.TeacherID
-    JOIN Class ON TtoC_relation.ClassID = Class.ID
+    JOIN Teacher_to_Class_relation ON User.ID = Teacher_to_Class_relation.TeacherID
+    JOIN Class ON Teacher_to_Class_relation.ClassID = Class.ID
     WHERE User.ID = ?;
   `;
   }
@@ -310,7 +310,7 @@ app.post("/TeacherRegister", (req, res) => {
       res.status(200).json({status: false, error: "存在相同帳號"});
     }
     else {
-      db.run(addNewUserQuery, ['Teacher', Name, Account, Password], function(err) {
+      db.run(add_newuser, ['Teacher', Name, Account, Password], function(err) {
         if (err) {
           res.status(200).json({ status: false, error: err.message });
           return;
@@ -325,8 +325,8 @@ app.post("/TeacherRegister", (req, res) => {
 /////////////////////////////////////學生加入課程/退出 
 
 app.post("/StudentJoinClass", (req, res) => {
-  const sjoinc=`
-    INSERT INTO StoC_relation(UserID,ClassID)
+  const student_join_class=`
+    INSERT INTO Student_to_Class_relation(UserID,ClassID)
     VALUES(?, ?)
   `;
   const selectClass = `
@@ -336,7 +336,7 @@ app.post("/StudentJoinClass", (req, res) => {
   const studentID = req.body.UserID;
   const ClassID = req.body.ClassID;
 
-  db.run(sjoinc, [studentID,ClassID], function(err) {
+  db.run(student_join_class, [studentID,ClassID], function(err) {
     if (err) {
       res.status(200).json({ status: false, error: err.message });
       return;
@@ -368,15 +368,15 @@ app.post("/StudentJoinClass", (req, res) => {
 });
 
 app.post("/StudentExitClass", (req, res) => {
-  const sexitc=`
-    DELETE FROM StoC_relation
+  const student_exit_class=`
+    DELETE FROM Student_to_Class_relation
     WHERE UserID=? AND ClassID=?
   `;
 
   const studentID = req.body.UserID;
   const ClassID = req.body.ClassID;
 
-  db.run(sexitc, [studentID,ClassID], function(err) {
+  db.run(student_exit_class, [studentID,ClassID], function(err) {
     if (err) {
       res.status(200).json({ status: false, error: err.message });
       return;
@@ -393,8 +393,8 @@ app.post("/TeacherCreateClass", (req, res) => {
     INSERT INTO Class(Name,TeacherID)
     VALUES(?, ?)
   `;
-  const ttoc_class = `
-    INSERT INTO TtoC_relation(TeacherID, ClassID)
+  const teacher_to_class = `
+    INSERT INTO Teacher_to_Class_relation(TeacherID, ClassID)
     VALUES(?, ?)
   `;
 
@@ -411,8 +411,8 @@ app.post("/TeacherCreateClass", (req, res) => {
       return;
     }
 
-    // 插入成功，查詢課程資訊
-    db.get(selectClass, [], function (err, row) {
+    // 插入成功，回傳成功訊息
+    db.run(ttoc_class, [TeacherID, ClassName], function (err) {
       if (err) {
         res.status(200).json({ status: false, error: err.message });
         return;
@@ -451,14 +451,14 @@ app.post("/TeacherDeleteClass", (req, res) => {
     DELETE FROM Class
     WHERE ID=?
   `;
-  const ttoc_class=`
-    DELETE FROM TtoC_relation
-    WHERE TeacherID=? AND ClassName =?
+  const teacher_to_class=`
+    DELETE FROM Teacher_to_Class_relation
+    WHERE TeacherID=? AND ClassID =?
   `;
 
   const ClassID = req.body.ClassID;
   const TeacherID = req.body.UserID;
-  const ClassName = req.body.ClassName;
+  //const ClassName = req.body.ClassName;
 
   db.run(classtab, [ClassID], function(err) {
     if (err) {
@@ -468,7 +468,7 @@ app.post("/TeacherDeleteClass", (req, res) => {
 
     // 插入成功，回傳成功訊息
     //res.json({ status: true, message: 'Create class successfully.' });
-    db.run(ttoc_class, [TeacherID,ClassName], function(err) {
+    db.run(teacher_to_class, [TeacherID,ClassID], function(err) {
       if (err) {
         res.status(200).json({ status: false, error: err.message });
         return;
@@ -485,8 +485,8 @@ app.post("/CreateDiscuss", (req, res) => {
     INSERT INTO Discuss(PublisherName,Context,Date)
     VALUES(?, ?, ?)
   `;
-  const ctodis_class=`
-    INSERT INTO CtoDis_relation(ClassID,DiscussID)
+  const class_to_dis=`
+    INSERT INTO Class_to_Discuss_relation(ClassID,DiscussID)
     VALUES(?, ?)
   `;
 
@@ -506,7 +506,7 @@ app.post("/CreateDiscuss", (req, res) => {
 
     // 插入成功，回傳成功訊息
     //res.json({ status: true, message: 'Create class successfully.' });
-    db.run(ctodis_class, [ClassID,DiscussID], function(err) {
+    db.run(class_to_dis, [ClassID,DiscussID], function(err) {
       if (err) {
         res.status(200).json({ status: false, error: err.message });
         return;
@@ -526,8 +526,8 @@ app.post("/DeleteDiscuss", (req, res) => {
     DELETE FROM Discuss
     WHERE ID=?
   `;
-  const ctodis_class=`
-    DELETE FROM CtoDis_relation
+  const class_to_discuss=`
+    DELETE FROM Class_to_Discuss_relation
     WHERE ClassID=? AND DiscussID =?
   `;
 
@@ -542,7 +542,7 @@ app.post("/DeleteDiscuss", (req, res) => {
 
     // 插入成功，回傳成功訊息
     //res.json({ status: true, message: 'Create class successfully.' });
-    db.run(ttoc_class, [ClassID,DiscussID], function(err) {
+    db.run(class_to_discuss, [ClassID,DiscussID], function(err) {
       if (err) {
         res.status(200).json({ status: false, error: err.message });
         return;
@@ -563,8 +563,8 @@ app.post("/CreateComment", (req, res) => {
     INSERT INTO Comments(PublisherName,Context,Date)
     VALUES(?, ?, ?)
   `;
-  const distocom_class=`
-    INSERT INTO DistoCom_relation(DisID,ComID)
+  const discuss_to_comment=`
+    INSERT INTO Discuss_to_Comment_relation(DisID,ComID)
     VALUES(?, ?)
   `;
 
@@ -584,7 +584,7 @@ app.post("/CreateComment", (req, res) => {
 
     // 插入成功，回傳成功訊息
     //res.json({ status: true, message: 'Create class successfully.' });
-    db.run(distocom_class, [DiscussID,comID], function(err) {
+    db.run(discuss_to_comment, [DiscussID,comID], function(err) {
       if (err) {
         res.status(200).json({ status: false, error: err.message });
         return;
@@ -604,8 +604,8 @@ app.post("/DeleteComment", (req, res) => {
     DELETE FROM Discuss
     WHERE ID=?
   `;
-  const distocom_class=`
-    DELETE FROM CtoDis_relation
+  const discuss_to_comment=`
+    DELETE FROM Class_to_Discuss_relation
     WHERE ClassID=? AND DiscussID =?
   `;
 
@@ -620,7 +620,7 @@ app.post("/DeleteComment", (req, res) => {
 
     // 插入成功，回傳成功訊息
     //res.json({ status: true, message: 'Create class successfully.' });
-    db.run(distocom_class, [ClassID,DiscussID], function(err) {
+    db.run(discuss_to_comment, [ClassID,DiscussID], function(err) {
       if (err) {
         res.status(200).json({ status: false, error: err.message });
         return;
