@@ -361,7 +361,7 @@ app.post("/StudentJoinClass", (req, res) => {
           ID: row.ID,
           Name: row.Name,
         },
-        message: 'Student Join successfully.',
+        message: 'Student Join class successfully.',
       });
     });
   });
@@ -382,7 +382,7 @@ app.post("/StudentExitClass", (req, res) => {
       return;
     }
     // 插入成功，回傳成功訊息
-    res.json({ status: true, message: 'Student Exit successfully.' });
+    res.json({ status: true, message: 'Student Exit class successfully.' });
   });
 
 });
@@ -592,7 +592,7 @@ app.post("/CreateComment", (req, res) => {
       }
   
       // 插入成功，回傳成功訊息
-      res.json({ status: true, message: 'comment successfully.' });
+      res.json({ status: true, message: 'comment create successfully.' });
     });
 
   });
