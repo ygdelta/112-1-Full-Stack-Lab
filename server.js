@@ -394,7 +394,7 @@ app.post("/TeacherCreateClass", (req, res) => {
     VALUES(?, ?)
   `;
   const ttoc_class = `
-    INSERT INTO TtoC_relation(TeacherID, ClassName)
+    INSERT INTO TtoC_relation(TeacherID, ClassID)
     VALUES(?, ?)
   `;
 
@@ -411,22 +411,22 @@ app.post("/TeacherCreateClass", (req, res) => {
       return;
     }
 
-    // 插入成功，回傳成功訊息
-    db.run(ttoc_class, [TeacherID, ClassName], function (err) {
+    // 插入成功，查詢課程資訊
+    db.get(selectClass, [], function (err, row) {
       if (err) {
         res.status(200).json({ status: false, error: err.message });
         return;
       }
 
-      // 插入成功，查詢課程資訊
-      db.get(selectClass, [], function (err, row) {
+      if (!row) {
+        res.status(200).json({ status: false, error: "Class not found." });
+        return;
+      }
+
+      // 插入成功，回傳成功訊息
+      db.run(ttoc_class, [TeacherID, row.ID], function (err) {
         if (err) {
           res.status(200).json({ status: false, error: err.message });
-          return;
-        }
-
-        if (!row) {
-          res.status(200).json({ status: false, error: "Class not found." });
           return;
         }
 

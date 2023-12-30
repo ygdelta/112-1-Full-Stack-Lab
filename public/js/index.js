@@ -32,7 +32,7 @@ const joinClassTemplate = `
 const createClassTemplate = `
     <div class="flex items-center justify-center w-full f-fit">
         <div class="flex flex-row items-center w-full">
-            <input class="text-lg classic-border rounded-md w-full h-fit p-3" type="number" placeholder="請輸入課程名稱"> 
+            <input class="text-lg classic-border rounded-md w-full h-fit p-3" type="input" placeholder="請輸入課程名稱"> 
             <button onclick="OnCreateClass(event)" class="text-lg text-white p-2 bg-blue-600 rounded-md w-24 h-fit m-2">建立</button>
         </div>
     </div>
