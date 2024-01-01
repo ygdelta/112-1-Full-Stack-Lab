@@ -850,8 +850,8 @@ app.post("/getcomment", function (req, res) {
     rows.forEach(row => {
       console.log(`Comments ID: ${row.ID}, Publisher: ${row.User}`);
       result.push({
-        ID: row.ID, 
-        Name: row.ClassName
+        ID: ID, 
+        Content: row.Content
       });
     });   
 
