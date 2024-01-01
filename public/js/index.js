@@ -505,6 +505,5 @@ function OnDeleteClass(e) {
 function CardOnClick(e) {
     let id = $(e.currentTarget).find("p#id");
     $("#class-id").text(id.text());
-    alert(id.text());
     ShowPage("class");
 }
