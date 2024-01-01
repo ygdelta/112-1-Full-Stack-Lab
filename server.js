@@ -518,7 +518,7 @@ app.post("/TeacherCreateChapter", (req, res) => {
       }
 
       // 插入成功，回傳成功訊息
-      db.run(class_to_chapter, [TeacherID, row.ID], function (err) {
+      db.run(class_to_chapter, [ClassID, row.ID], function (err) {
         if (err) {
           res.status(200).json({ status: false, error: err.message });
           return;
@@ -610,7 +610,7 @@ app.post("/TeacherCreateSection", (req, res) => {
       }
 
       // 插入成功，回傳成功訊息
-      db.run(chapter_to_section, [TeacherID, row.ID], function (err) {
+      db.run(chapter_to_section, [SectionName, row.ID], function (err) {
         if (err) {
           res.status(200).json({ status: false, error: err.message });
           return;
@@ -819,6 +819,48 @@ app.post("/DeleteComment", (req, res) => {
 
   });
 
+});
+////////////////////////////////////////////////查詢留言
+app.post("/getcomment", function (req, res) {
+  const ID=req.body.id;  //Discuss的ID
+  //const User = req.body.user;
+  //const Content = req.body.content;
+  //const Date = req.body.date;
+  var find_comment = `
+    SELECT Comments.PublisherName, Comments.Context, Comments.Date
+    FROM Discuss
+    JOIN Discuss_to_Comment_relation ON Discuss.ID = Discuss_to_Comment_relation.DisID
+    JOIN Comments ON Discuss_to_Comment_relation.ComID = Comments.ID
+    WHERE Discuss.ID = ?;
+  `;
+
+  var result = [];
+  db.all(find_comment, [ID], (err, rows) => {
+    if (err) {
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ 
+          status: false,
+          data: result
+        }));
+      throw err;
+    }
+  
+    // 處理查詢結果
+    console.log(`Information about Comments under Discuss_ID=${ID} :`);
+    rows.forEach(row => {
+      console.log(`Comments ID: ${row.ID}, Publisher: ${row.User}`);
+      result.push({
+        ID: row.ID, 
+        Name: row.ClassName
+      });
+    });   
+
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ 
+      status: true,
+      data: result
+    }));
+  });
 });
 
 ///////////////////////////////////////查詢課程中的章節與小節
