@@ -846,7 +846,7 @@ app.post("/getClassDiscuss", function (req, res) {
       throw err;
     }
 
-    // 处理查询结果
+    // 處理查詢結果
     rows.forEach(discussRow => {
       var discussItem = {
         id: discussRow.ID,
@@ -856,7 +856,7 @@ app.post("/getClassDiscuss", function (req, res) {
         comments: []
       };
 
-      // 查询评论
+      // 查詢評論
       var find_comment = `
         SELECT Comments.ID, Comments.PublisherName, Comments.Context, Comments.Date
         FROM Discuss
@@ -875,7 +875,7 @@ app.post("/getClassDiscuss", function (req, res) {
           throw err;
         }
 
-        // 处理评论结果
+        // 處理評論結果
         commentRows.forEach(commentRow => {
           var commentItem = {
             user: commentRow.PublisherName,
@@ -887,7 +887,7 @@ app.post("/getClassDiscuss", function (req, res) {
 
         result.push(discussItem);
 
-        // 如果所有的 Discuss 都处理完毕，返回结果
+        // 如果所有的 Discuss 都處理完畢，回傳結果
         if (result.length === rows.length) {
           res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify({ 
