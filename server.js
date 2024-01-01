@@ -550,11 +550,12 @@ app.post("/TeacherDeleteChapter", (req, res) => {
     WHERE ClassID=? AND ChapterID =?
   `;
 
-  const ChapterID = req.body.ChpaterID;
+  const ChapterID = req.body.ChapterID;
   const ClassID = req.body.ClassID;
   //const ClassName = req.body.ClassName;
-
-  db.run(chaptertab, [ClassID], function(err) {
+  console.log(ChapterID);
+  console.log(ClassID);
+  db.run(chaptertab, [ChapterID], function(err) {
     if (err) {
       res.status(200).json({ status: false, error: err.message });
       return;

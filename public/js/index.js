@@ -392,17 +392,30 @@ function CreateSection(e) {
 
 function OnDeleteChapter(e) {
     let chapterIdDom = $(e.currentTarget).parent().prev().prev();
+    let classId = $("#class-id").text();
+    if( !confirm("是否要刪除此章節") )
+        return;
     $.ajax({
         type: "POST",
-        url: "/TeacherDeleteSection",
-        data: {id: chapterIdDom.text()},
+        url: "/TeacherDeleteChapter",
+        data: { 
+            ChapterID: parseInt(chapterIdDom.text()), 
+            ClassID: parseInt(classId)
+        },
         dataType: "JSON",
         success: function(res) {
-            chapterIdDom.parent().parent().remove();
+            if( res.status ) {
+                alert("刪除成功");
+                chapterIdDom.parent().parent().remove();
+            }
+            else if( res.status == false ) {
+                alert("刪除章節發生錯誤");
+                console.log(res);
+            }
         },
         error: function(err) {
             alert("刪除章節發生錯誤");
-            chapterIdDom.parent().parent().remove();
+            console.log(err);
         }
     });
 }
@@ -531,4 +544,12 @@ function expandComment(event) {
         comments.removeClass("hidden");
         btnExpand.data("isopened", "true");
     }
+}
+
+function GetPrevDom(jqObj, num) {
+    let result;
+    for(let i = 0; i < num; i++) {
+        result = jqObj.prev();
+    }
+    return result;
 }
