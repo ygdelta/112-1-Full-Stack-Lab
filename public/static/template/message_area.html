@@ -47,21 +47,3 @@
         <input class="classic-border rounded-2xl w-full mr-2 px-3" type="text" placeholder="新增留言">
     </div>
 </div>
-
-<script>
-function expandComment(event) {
-    let btnExpand = $(event.currentTarget);
-    let comments = btnExpand.parent().children("div.comment");
-    let isOpened =  btnExpand.data("isopened");
-    if(isOpened === "true") {
-        for(let i = 0; i < comments.length - 1; i++) {
-            $(comments[i]).addClass("hidden");
-        }
-        btnExpand.data("isopened", "false");
-    }
-    else {
-        comments.removeClass("hidden");
-        btnExpand.data("isopened", "true");
-    }
-}
-</script>

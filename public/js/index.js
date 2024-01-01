@@ -516,3 +516,19 @@ function OnClickCreateSection(e) {
     //<!--!html-->
     ShowModal({ title: "新增小節", content: createSectionTemplate });
 }
+
+function expandComment(event) {
+    let btnExpand = $(event.currentTarget);
+    let comments = btnExpand.parent().children("div.comment");
+    let isOpened =  btnExpand.data("isopened");
+    if(isOpened === "true") {
+        for(let i = 0; i < comments.length - 1; i++) {
+            $(comments[i]).addClass("hidden");
+        }
+        btnExpand.data("isopened", "false");
+    }
+    else {
+        comments.removeClass("hidden");
+        btnExpand.data("isopened", "true");
+    }
+}
