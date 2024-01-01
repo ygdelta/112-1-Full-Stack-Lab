@@ -588,7 +588,8 @@ app.post("/TeacherCreateSection", (req, res) => {
   `;
 
   const SectionName = req.body.SectionName;
-  const VideoID = req.body.VideoID;
+  const VideoID = req.body.VideoID;  
+  const ChapterID = req.body.ChapterID;
 
   db.run(sectiontab, [SectionName, VideoID], function (err) {
     if (err) {
@@ -610,7 +611,7 @@ app.post("/TeacherCreateSection", (req, res) => {
       }
 
       // 插入成功，回傳成功訊息
-      db.run(chapter_to_section, [SectionName, row.ID], function (err) {
+      db.run(chapter_to_section, [ChapterID, row.ID], function (err) {
         if (err) {
           res.status(200).json({ status: false, error: err.message });
           return;
@@ -877,42 +878,34 @@ app.post("/GetClassInformation", (req, res) => {
   WHERE C_TO_S.ChapterID = ?;
   `;
   let result = [];
-  db.all(queryChapter, [classId], function(err, rows) {
-
+  db.all(queryChapter, [classId], function(err, chapters) {
     if ( err ) {
       res.status(200).json({ status: false, error: err.message });
       return;
     }
-
-    rows.forEach(function(row) {
-      let section = [];
-      db.all(querySection, [row.ID], function(err, sections) {
-
-        if ( err ) {
+    chapters.forEach((chapter) => {
+      let chapterData = {
+        chapter: chapter.Name,
+        chapterId: chapter.ID,
+        section: []
+      }
+      db.all(querySection, [chapterData.chapterId], function(err, sections) {
+        if( err ) {
           res.status(200).json({ status: false, error: err.message });
           return;
         }
-
-        sections.forEach(function(i) {
-          let sectionData = {
-            name: i.Name,
-            sectionId: i.ID,
-            videoID: i.VideoID
-          };
-          section.push(sectionData);
+        console.log(sections);
+        sections.forEach((section) => {
+          chapterData.section.push({
+            name: section.Name,
+            sectionId: section.ID,
+            videoID: section.VideoID
+          });
         });
+        result.push(chapterData);
+        if( result.length === chapters.length ) res.status(200).json({ status: true, data: result });
       });
-
-      let chapter = {
-        chapter: row.Name,
-        chapterId: row.ID,
-        section: section
-      };
-
-      result.push(chapter); 
     });
-    console.log(result);
-    res.status(200).json({ status: true, data: result });
   });
 });
 

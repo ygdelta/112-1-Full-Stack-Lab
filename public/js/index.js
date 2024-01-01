@@ -50,15 +50,6 @@ const createChapterTemplate = `
 `;
 //<!--!html-->
 
-//<!--html-->
-const createSectionTemplate = `
-    <div class="flex flex-col items-center justify-center w-full f-fit">
-        <input class="text-lg classic-border rounded-md w-full h-fit mb-2 p-3" type="text" placeholder="請輸入小節名稱"> 
-        <input class="text-lg classic-border rounded-md w-full h-fit mb-2 p-3" type="text" placeholder="請輸入Youtube影片網址"> 
-        <button onclick="OnCreateSection(event)" class="text-lg classic-border rounded-md w-full h-fit">新增</button>
-    </div>
-`;
-//<!--!html-->
 
 
 $(document).ready(function () {
@@ -367,7 +358,8 @@ function OnCreateChapter(e) {
     });
 }
 
-function OnCreateSection(e) {
+function CreateSection(e) {
+    let chapterID = $(e.currentTarget).prev().prev().prev().text();
     let sectionName = $(e.currentTarget).prev().prev().val();
     let videoId = GetIDfromURL($(e.currentTarget).prev().val());
     if(sectionName == "") {
@@ -382,8 +374,9 @@ function OnCreateSection(e) {
         type: "POST",
         url: "/TeacherCreateSection",
         data: {
-            name: sectionName,
-            videoId: videoId
+            ChapterID: chapterID,
+            SectionName: sectionName,
+            VideoID: videoId
         },
         dataType: "JSON",
     })
@@ -506,4 +499,20 @@ function CardOnClick(e) {
     let id = $(e.currentTarget).find("p#id");
     $("#class-id").text(id.text());
     ShowPage("class");
+}
+
+function OnClickCreateSection(e) {
+    let chapterID = $(e.currentTarget).parent().prev().prev().text();
+    console.log(chapterID);
+    //<!--html-->
+    const createSectionTemplate = `
+    <div class="flex flex-col items-center justify-center w-full f-fit">
+            <p class="hidden">${chapterID}</p>
+            <input class="text-lg classic-border rounded-md w-full h-fit mb-2 p-3" type="text" placeholder="請輸入小節名稱"> 
+            <input class="text-lg classic-border rounded-md w-full h-fit mb-2 p-3" type="text" placeholder="請輸入Youtube影片網址"> 
+            <button onclick="CreateSection(event)" class="text-lg classic-border rounded-md w-full h-fit">新增</button>
+    </div>
+    `;
+    //<!--!html-->
+    ShowModal({ title: "新增小節", content: createSectionTemplate });
 }
