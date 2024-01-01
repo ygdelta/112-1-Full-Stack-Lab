@@ -316,6 +316,7 @@ function OnCreateClass(e) {
 
 function OnCreateChapter(e) {
     let chapterName = $(e.currentTarget).prev().val();
+    let classId = $("#class-id").text();
     if(chapterName == "") {
         alert("請輸入章節名稱");
         return;
@@ -323,55 +324,45 @@ function OnCreateChapter(e) {
 
     $.ajax({
         type: "POST",
-        url: "CreateChapter",
-        data: {name: chapterName},
-        dataType: "dataType",
+        url: "/TeacherCreateChapter",
+        data: {
+            ChapterName: chapterName, 
+            ClassID: classId
+        },
+        dataType: "JSON",
     })
     .then(function(res) {
-        //<!--html-->
-        let chapterTitle = `
-        <div class="flex flex-col w-full">
-            <div class="flex justify-between items-center border-solid border-blue-600 border-b w-full p-3">
-                <p class="hidden">${id}</p>
-                <div class="text-left text-3xl text-blue-600">${chapterName}</div>
-                <div class="edit-nav flex h-fit w-fit">
-                    <svg onclick="ShowModal({title: '新增小節', content: createSectionTemplate})" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline-block rounded-full w-6 h-6 hover:cursor-pointer hover:bg-stone-300">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    <div class="w-1 mx-2"></div>
-                    <svg onclick="OnDeleteChapter(event)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline-block rounded-full w-6 h-6 hover:cursor-pointer hover:bg-stone-300">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                    </svg>
+        if( res.status == true ) {
+            //<!--html-->
+            let chapterTitle = `
+            <div class="flex flex-col w-full">
+                <div class="flex justify-between items-center border-solid border-blue-600 border-b w-full p-3">
+                    <p class="hidden">${ID}</p>
+                    <div class="text-left text-3xl text-blue-600">${Name}</div>
+                    <div class="edit-nav flex h-fit w-fit">
+                        <svg onclick="ShowModal({title: '新增小節', content: createSectionTemplate})" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline-block rounded-full w-6 h-6 hover:cursor-pointer hover:bg-stone-300">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        <div class="w-1 mx-2"></div>
+                        <svg onclick="OnDeleteChapter(event)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline-block rounded-full w-6 h-6 hover:cursor-pointer hover:bg-stone-300">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        </svg>
+                    </div>
                 </div>
             </div>
-        </div>
-        `;    
-        //<!--!html-->
-
-        $.tmpl(chapterTitle, res.data).insertBefore("#btn-add-chapter");
-        CloseModal();
+            `;    
+            //<!--!html-->
+            $.tmpl(chapterTitle, res.data).insertBefore("#btn-add-chapter");
+            CloseModal();
+        }
+        else if( res.status == false ) {
+            alert("建立章節發生錯誤");
+            CloseModal();
+            console.log(res);
+        }
     }, function(err) {
-        //<!--html-->
-        let chapterTitle = `
-        <div class="flex flex-col w-full">
-            <div class="flex justify-between items-center border-solid border-blue-600 border-b w-full p-3">
-                <p class="hidden">testId</p>
-                <div class="text-left text-3xl text-blue-600">${chapterName}</div>
-                <div class="edit-nav flex h-fit w-fit">
-                    <svg onclick="ShowModal({title: '新增小節', content: createSectionTemplate})" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline-block rounded-full w-6 h-6 hover:cursor-pointer hover:bg-stone-300">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    <div class="w-1 mx-2"></div>
-                    <svg onclick="OnDeleteChapter(event)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline-block rounded-full w-6 h-6 hover:cursor-pointer hover:bg-stone-300">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                    </svg>
-                </div>
-            </div>
-        </div>
-        `;    
-        //<!--!html-->
-
-        $.tmpl(chapterTitle, {}).insertBefore("#btn-add-chapter");
+        alert("建立章節發生錯誤");
+        console.log(err);
         CloseModal();
     });
 }

@@ -7,14 +7,12 @@
 <script>
 $(document).ready(function() {
     classId = $("#class-id").text();
-    console.log("classId: " + classId);
-
     if(userData.Role === "Student")
         $(".edit-nav").addClass("hidden");
 
     $.ajax({
         type: "POST",
-        url: "getChaptersAndSections",
+        url: "/GetClassInformation",
         data: {classId: classId},
         dataType: "JSON"
     })
@@ -22,74 +20,30 @@ $(document).ready(function() {
         /*Implement success function here*/
         if(userData.Role === "Student")
             $(".edit-nav").addClass("hidden");
-
-    }, function(err) {
-        let data = {
-            data: [
-                {
-                    chapter: "Chapter1",
-                    chapterId: 1,
-                    section: [
-                        {
-                            name: "Section1-1",
-                            sectionId: 1,
-                            videoID: "K1gbveCNlQs"
-                        },
-                        {
-                            name: "Section1-2",
-                            sectionId: 2,
-                            videoID: "K1gbveCNlQs"
-                        },
-                        {
-                            name: "Section1-3",
-                            sectionId: 3,
-                            videoID: "K1gbveCNlQs"
-                        },
-                        {
-                            name: "Section1-4",
-                            sectionId: 4,
-                            videoID: "K1gbveCNlQs"
-                        },
-                    ]
-                },
-                {
-                    chapter: "Chapter2",
-                    chapterId: 2,
-                    section: [
-                        {
-                            name: "Section2-1",
-                            sectionId: 5,
-                            videoID: "HPvJRDergYM"
-                        },
-                        {
-                            name: "Section2-2",
-                            sectionId: 6,
-                            videoID: "HPvJRDergYM"
-                        },
-                        {
-                            name: "Section2-3",
-                            sectionId: 7,
-                            videoID: "HPvJRDergYM"
-                        }
-                    ]
-                },
-            ]
-        };
-        data.data.forEach(function(item) {
-            $.ajax({
-                type: "GET",
-                url: components["classChapter"],
-                dataType: "text"
-            })
-            .then(function(res) {
-                let chapters = $.tmpl(res, item);
-                chapters.insertBefore("#btn-add-chapter");
-                chapters.ready(function() {
-                    if(userData.Role === "Student")
-                        $(".edit-nav").addClass("hidden");
+        if( res.status == true ) {
+            res.data.forEach(function(item) {
+                $.ajax({
+                    type: "GET",
+                    url: components["classChapter"],
+                    dataType: "text"
+                })
+                .then(function(res) {
+                    let chapters = $.tmpl(res, item);
+                    chapters.insertBefore("#btn-add-chapter");
+                    chapters.ready(function() {
+                        if(userData.Role === "Student")
+                            $(".edit-nav").addClass("hidden");
+                    });
                 });
-            });
-        });
+            });    
+        }
+        else if( res.status == false ) {
+            alert("課程資訊獲取失敗");
+            console.log(res);
+        }
+    }, function(err) {
+        alert("課程資訊獲取失敗");
+        console.log(err);
     });
 });
 
