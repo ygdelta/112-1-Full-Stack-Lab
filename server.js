@@ -930,7 +930,7 @@ app.post("/GetClassInformation", (req, res) => {
     }
     if( chapters.length == 0 ) 
       res.status(200).json({ status: true, data: [] });
-    chapters.forEach((chapter) => {
+      chapters.forEach((chapter) => {
       let chapterData = {
         chapter: chapter.Name,
         chapterId: chapter.ID,
