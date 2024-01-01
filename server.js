@@ -743,6 +743,50 @@ app.post("/DeleteDiscuss", (req, res) => {
   });
 
 });
+///////////////////////////////////////查詢討論串 (輸入教室ID得到所有討論串ID)
+app.post("/getdiscuss", function (req, res) {
+  const claID=req.body.id;  //Class的ID
+  //const User = req.body.user;
+  //const Content = req.body.content;
+  //const Date = req.body.date;
+  var find_discuss = `
+    SELECT Discuss.ID,Discuss.PublisherName, Discuss.Context, Discuss.Date
+    FROM Class
+    JOIN Class_to_Discuss_relation ON Class.ID = Class_to_Discuss_relation.ClassID
+    JOIN Discuss ON Class_to_Discuss_relation.DiscussID = Discuss.ID
+    WHERE Class.ID = ?;
+  `;
+  console.log(`Information about Comments under Discuss_ID=${claID} :`);
+
+  var result = [];
+  db.all(find_discuss, [claID], (err, rows) => {
+    if (err) {
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ 
+          status: false,
+          data: result
+        }));
+      throw err;
+    }
+  
+    // 處理查詢結果
+    rows.forEach(row => {
+      console.log(`Discuss ID: ${row.ID}, Publisher: ${row.PublisherName}`);
+      result.push({
+        ID: row.ID, 
+        Publisher: row.PublisherName,
+        Context: row.Context,
+        Date:row.Date
+      });
+    });   
+
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ 
+      status: true,
+      data: result
+    }));
+  });
+});
 
 ///////////////////////////////////////加入留言/刪除
 
