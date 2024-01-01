@@ -380,7 +380,7 @@ function OnCreateSection(e) {
     }
     $.ajax({
         type: "POST",
-        url: "CreateSection",
+        url: "/TeacherCreateSection",
         data: {
             name: sectionName,
             videoId: videoId
@@ -401,7 +401,7 @@ function OnDeleteChapter(e) {
     let chapterIdDom = $(e.currentTarget).parent().prev().prev();
     $.ajax({
         type: "POST",
-        url: "DeleteChapter",
+        url: "/TeacherDeleteSection",
         data: {id: chapterIdDom.text()},
         dataType: "JSON",
         success: function(res) {
