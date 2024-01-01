@@ -421,18 +421,32 @@ function OnDeleteChapter(e) {
 }
 
 function OnDeleteSection(e) {
-    let SectionIdDom = $(e.currentTarget).parent().prev();
+    let sectionIdDom = $(e.currentTarget).parent().prev();
+    let chapterIdDom = $(e.currentTarget).parent().parent()
+                            .parent().prev().children("p");
+    if( !confirm("是否要刪除小節") )
+        return;
     $.ajax({
         type: "POST",
-        url: "DeleteChapter",
-        data: {id: SectionIdDom.text()},
+        url: "/TeacherDeleteSection",
+        data: {
+            ChapterID: parseInt(chapterIdDom.text()),
+            SectionID: parseInt(sectionIdDom.text())
+        },
         dataType: "JSON",
         success: function(res) {
-            SectionIdDom.parent().remove();
+            if( res.status == true ) {
+                alert("刪除成功");
+                sectionIdDom.parent().remove();
+            }
+            else if( res.status == false ) {
+                alert("刪除小節發生錯誤");
+                console.log(res);
+            }
         },
         error: function(err) {
-            alert("刪除章節發生錯誤");
-            SectionIdDom.parent().remove();
+            alert("刪除小節發生錯誤");
+            console.log(err);
         }
     });
 }
