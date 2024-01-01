@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 
 var db = new sqlite3.Database('db/test.db');
 const app = express();
+//app.use(express.json());
 
 function GenerateUserToken(userData) {
   const token = jwt.sign(userData, "secretKey", { expiresIn: "1h" });
@@ -822,20 +823,21 @@ app.post("/DeleteComment", (req, res) => {
 });
 ////////////////////////////////////////////////查詢留言
 app.post("/getcomment", function (req, res) {
-  const ID=req.body.id;  //Discuss的ID
+  const disID=req.body.id;  //Discuss的ID
   //const User = req.body.user;
   //const Content = req.body.content;
   //const Date = req.body.date;
   var find_comment = `
-    SELECT Comments.PublisherName, Comments.Context, Comments.Date
+    SELECT Comments.ID,Comments.PublisherName, Comments.Context, Comments.Date
     FROM Discuss
     JOIN Discuss_to_Comment_relation ON Discuss.ID = Discuss_to_Comment_relation.DisID
     JOIN Comments ON Discuss_to_Comment_relation.ComID = Comments.ID
     WHERE Discuss.ID = ?;
   `;
+  console.log(`Information about Comments under Discuss_ID=${disID} :`);
 
   var result = [];
-  db.all(find_comment, [ID], (err, rows) => {
+  db.all(find_comment, [disID], (err, rows) => {
     if (err) {
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({ 
@@ -846,12 +848,13 @@ app.post("/getcomment", function (req, res) {
     }
   
     // 處理查詢結果
-    console.log(`Information about Comments under Discuss_ID=${ID} :`);
     rows.forEach(row => {
-      console.log(`Comments ID: ${row.ID}, Publisher: ${row.User}`);
+      console.log(`Comments ID: ${row.ID}, Publisher: ${row.PublisherName}`);
       result.push({
-        ID: ID, 
-        Content: row.Content
+        ID: row.ID, 
+        Publisher: row.PublisherName,
+        Context: row.Context,
+        Date:row.Date
       });
     });   
 
