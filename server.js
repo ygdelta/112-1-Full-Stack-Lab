@@ -837,7 +837,7 @@ app.post("/GetClassInformation", (req, res) => {
   let result = [];
   db.all(queryChapter, [classId], function(err, rows) {
 
-    if (err) {
+    if ( err ) {
       res.status(200).json({ status: false, error: err.message });
       return;
     }
@@ -846,7 +846,7 @@ app.post("/GetClassInformation", (req, res) => {
       let section = [];
       db.all(querySection, [row.ID], function(err, sections) {
 
-        if (err) {
+        if ( err ) {
           res.status(200).json({ status: false, error: err.message });
           return;
         }
@@ -870,7 +870,7 @@ app.post("/GetClassInformation", (req, res) => {
       result.push(chapter); 
     });
     console.log(result);
-    res.status(200).json({status: true, data: result});
+    res.status(200).json({ status: true, data: result });
   });
 });
 
