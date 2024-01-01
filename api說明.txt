@@ -1,7 +1,7 @@
 Post /getclasses
 PayLoad: { role: "teacher"/"student", id: "" }
 Return: { 
-    status: true/false,
+    status: true/ false,
     data: [
         {
             ID: 1,
@@ -10,6 +10,50 @@ Return: {
         {
             ID: 2,
             Name: "AI",
+        }
+    ]
+}
+
+Post /getClassDiscuss
+PayLoad: { id: 課程ID }
+Return: {
+    status: true/ false, 
+    data: [
+        {
+            id: 1,
+            user: "I am teacher",
+            content: "I am message board test.",
+            date: FormatDate(),
+            comment: [
+                {
+                    user: "Student 1",
+                    content: "this comment was from student 1",
+                    date: FormatDate()
+                },
+                {
+                    user: "Student 2",
+                    content: "this comment was from student 2",
+                    date: FormatDate()
+                }
+            ]
+        },
+        {
+            id: 2,
+            user: "王昱鈞",
+            content: "這是留言板測試.",
+            date: FormatDate(),
+            comment: [
+                {
+                    user: "楊小弟1",
+                    content: "this comment was from 楊小弟1",
+                    date: FormatDate()
+                },
+                {
+                    user: "楊小弟2",
+                    content: "this comment was from 楊小弟2",
+                    date: FormatDate()
+                }
+            ]
         }
     ]
 }

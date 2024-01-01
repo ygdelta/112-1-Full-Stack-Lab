@@ -679,19 +679,20 @@ app.post("/CreateDiscuss", (req, res) => {
     INSERT INTO Class_to_Discuss_relation(ClassID,DiscussID)
     VALUES(?, ?)
   `;
-
-  const PublisherName = req.body.PublisherName;
-  const Context = req.body.Context;
+  const selectLastInsert = `
+    SELECT ID FROM Discuss WHERE ID = (SELECT last_insert_rowid())
+  `;
+  const PublisherName = req.body.user;
+  const Context = req.body.content;
   const ClassID = req.body.ClassID;
-  const Date = req.body.Date;
-
+  const Date = req.body.date;
 
   db.run(dicusstab, [PublisherName,Context,Date], function(err) {
     if (err) {
       res.status(200).json({ status: false, error: err.message });
       return;
     }
-
+    
     const DiscussID = this.lastID;
 
     // 插入成功，回傳成功訊息
@@ -701,9 +702,14 @@ app.post("/CreateDiscuss", (req, res) => {
         res.status(200).json({ status: false, error: err.message });
         return;
       }
-  
-      // 插入成功，回傳成功訊息
-      res.json({ status: true, message: 'discuss create successfully.' });
+      db.get(selectLastInsert, [], function(err, row) {
+        if( err ) {
+          res.status(200).json({ status: false, error: err });
+          return;
+        }
+        // 插入成功，回傳成功訊息
+        res.json({ status: true, data: row.ID, message: 'discuss create successfully.' });
+      });
     });
 
   });
@@ -824,9 +830,8 @@ app.post("/DeleteComment", (req, res) => {
 
 });
 ////////////////////////////////////////////////用課程ID查詢討論串&留言
-app.post("/getClassDiscuss", function (req, res) {
+app.post("/GetClassDiscussion", function (req, res) {
   const classID = req.body.id;  // Class的ID
-
   var find_discuss = `
     SELECT Discuss.ID, Discuss.PublisherName, Discuss.Context, Discuss.Date
     FROM Class
@@ -846,7 +851,8 @@ app.post("/getClassDiscuss", function (req, res) {
       }));
       throw err;
     }
-
+    if( rows.length == 0 ) 
+      res.status(200).json({ status: true, data: [] });
     // 處理查詢結果
     rows.forEach(discussRow => {
       var discussItem = {
@@ -854,7 +860,7 @@ app.post("/getClassDiscuss", function (req, res) {
         user: discussRow.PublisherName,
         content: discussRow.Context,
         date: discussRow.Date,
-        comments: []
+        comment: []
       };
 
       // 查詢評論
@@ -883,7 +889,7 @@ app.post("/getClassDiscuss", function (req, res) {
             content: commentRow.Context,
             date: commentRow.Date
           };
-          discussItem.comments.push(commentItem);
+          discussItem.comment.push(commentItem);
         });
 
         result.push(discussItem);
@@ -922,6 +928,8 @@ app.post("/GetClassInformation", (req, res) => {
       res.status(200).json({ status: false, error: err.message });
       return;
     }
+    if( chapters.length == 0 ) 
+      res.status(200).json({ status: true, data: [] });
     chapters.forEach((chapter) => {
       let chapterData = {
         chapter: chapter.Name,

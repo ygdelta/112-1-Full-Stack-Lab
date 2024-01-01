@@ -8,85 +8,38 @@
 </div>
 <script>
 $(document).ready(function() { 
-    classId = $("#class-id").text();
-    console.log("classId: " + classId);
+    classId = parseInt($("#class-id").text());
     /* Get discussion data */
     $.ajax({
         type: "POST",
-        url: "url",
-        data: {id: classId},
+        url: "/GetClassDiscussion",
+        data: { id: classId },
         dataType: "JSON"
     })
     .then(function(res) {
-        /* Wait implement */       
-    }, function(err) {
-        var testData = {
-            data: [
-                {
-                    id: 1,
-                    user: "I am teacher",
-                    content: "I am message board test.",
-                    date: FormatDate(),
-                    comment: [
-                        {
-                            user: "Student 1",
-                            content: "this comment was from student 1",
-                            date: FormatDate()
-                        },
-                        {
-                            user: "Student 2",
-                            content: "this comment was from student 2",
-                            date: FormatDate()
-                        },
-                        {
-                            user: "Student 3",
-                            content: "this comment was from student 3",
-                            date: FormatDate()
-                        }
-                    ]
-                },
-                {
-                    id: 2,
-                    user: "王昱鈞",
-                    content: "這是留言板測試.",
-                    date: FormatDate(),
-                    comment: [
-                        {
-                            user: "楊小弟1",
-                            content: "this comment was from 楊小弟1",
-                            date: FormatDate()
-                        },
-                        {
-                            user: "楊小弟2",
-                            content: "this comment was from 楊小弟2",
-                            date: FormatDate()
-                        },
-                        {
-                            user: "楊小弟3",
-                            content: "this comment was from 楊小弟3",
-                            date: FormatDate()
-                        }
-                    ]
-                }
-            ]
-            
-        }
-        $.ajax({
-            type: "GET",
-            url: components["commentCard"],
-            dataType: "text"
-        })
-        .then(function(res) {
-            testData.data.forEach(function(item) {
-                $.tmpl(res, item).appendTo("#discussion-container");
+        if( res.status == true ) {
+            $.ajax({
+                type: "GET",
+                url: components["commentCard"],
+                dataType: "text"
+            })
+            .then(function(template) {
+                console.log(res);
+                res.data.forEach(function(item) {
+                    $.tmpl(template, item).appendTo("#discussion-container");
+                });
             });
-        })
+        }
+        else if( res.status == false ) {
+            alert("取得討論串發生錯誤");
+            console.log(res);
+        }
+    }, function(err) {
+        alert("取得討論串發生錯誤");
+        console.log(err);
     });
-
     $("div.message-board").on("click", messageOnClick);
-
     $("#btn-board-cancel").on("click", messageOnClick);
-
     $("#btn-send").on("click", function(event) {
         let commentCard;
         let cardData = {
@@ -94,31 +47,35 @@ $(document).ready(function() {
             user: userData.Name,
             date: new Date(),
             content: $("#message").val(),
+            ClassID: parseInt($("#class-id").text()),
+            comment: []
         };
-
         $.ajax({
             type: "GET",
             url: components["commentCard"],
             datatype: "text",
-            success: function(res) {
-                commentCard = res; 
-            },
         })
         .then(function(res) {
-            /* Post data to server */
+            commentCard = res;
             $.ajax({
-            type: "POST",
-            url: "url",
-            data: cardData,
-            dataType: "JSON",
+                type: "POST",
+                url: "/CreateDiscuss",
+                data: cardData,
+                dataType: "JSON",
             })
             .then(function(res) {
-                /* cardData.id = res.data.id */
+                if( res.status == true ) {
+                    cardData.id = res.data;
+                    console.log(cardData);
+                    $.tmpl(commentCard, cardData).insertBefore($("#message-container").next());
+                }
+                else if( res.status == false ) {
+                    alert("建立討論串發生錯誤");
+                    console.log(res);
+                }
             }, function(err) {
-                /* 假設id為900 */
-                alert("Error occured.");
-                cardData.id = 900; 
-                $.tmpl(commentCard, cardData).insertBefore($("#message-container").next());
+                alert("建立討論串發生錯誤");
+                console.log(err);
             });
         });
         $("#message").val("");
