@@ -905,7 +905,7 @@ app.post("/GetClassInformation", (req, res) => {
 
       let chapter = {
         chapter: row.Name,
-        chapterId: ID,
+        chapterId: row.ID,
         section: section
       };
 
