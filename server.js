@@ -907,7 +907,8 @@ app.post("/GetClassInformation", (req, res) => {
   const queryChapter = `
   SELECT Chapter.ID, Chapter.Name
   FROM Chapter 
-  WHERE Chapter.ClassID = ?;
+  WHERE Chapter.ClassID = ?
+  ORDER BY Chapter.ID;
   `;
   const querySection = `
   SELECT Section.ID, Section.Name, Section.VideoID
@@ -931,7 +932,6 @@ app.post("/GetClassInformation", (req, res) => {
           res.status(200).json({ status: false, error: err.message });
           return;
         }
-        console.log(sections);
         sections.forEach((section) => {
           chapterData.section.push({
             name: section.Name,
@@ -940,7 +940,10 @@ app.post("/GetClassInformation", (req, res) => {
           });
         });
         result.push(chapterData);
-        if( result.length === chapters.length ) res.status(200).json({ status: true, data: result });
+        if( result.length === chapters.length ) {
+          result.sort((a, b) => a.chapterId - b.chapterId);
+          res.status(200).json({ status: true, data: result });
+        }
       });
     });
   });
