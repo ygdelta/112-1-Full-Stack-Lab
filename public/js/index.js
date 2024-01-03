@@ -156,19 +156,17 @@ function SendComment(event) {
     let prevComment = $(event.currentTarget).parent().prev();
     let btnNumOfComments = $(event.currentTarget).parent().siblings("p[data-isopened]");
     let NumOfComments = parseInt(btnNumOfComments.text().replace(/[^0-9]/g,""));
-
+    let isOpen = $('p[onclick="expandComment(event)"]').data('isopened');
     if(comment == "") {
         alert("請輸入留言內容");
         return;
     }
 
     let data = {
-        id: id,
-        content: {
-            user: userData.Name,
-            comment: comment,
-            date: new Date()
-        }
+        Context: comment,
+        Date: new Date(),
+        PublisherName: userData.Name,
+        DiscussID: id,
     };
     
     let commentTemplate = [
@@ -176,33 +174,40 @@ function SendComment(event) {
             '<img class="w-11 h-11" src="../../img/user.png">',
             '<div class="flex flex-col items-start">',
                 '<div class="flex flex-row items-start justify-center h-fit mx-3">',
-                    '<p class="text-sm font-bold">${user}</p>',
-                    '<p class="text-xs text-stone-400 mx-2">${FormatDate(date)}</p>',
+                    '<p class="text-sm font-bold">${PublisherName}</p>',
+                    '<p class="text-xs text-stone-400 mx-2">${FormatDate(Date)}</p>',
                 '</div>',           
-                '<p class="text-wrap text-left text-base mx-3">${comment}</p>',
+                '<p class="text-wrap text-left text-base mx-3">${Context}</p>',
             '</div>',
         '</div>'];
     
     /* Send comment data */
     $.ajax({
         type: "POST",
-        url: "SendComment",
+        url: "/CreateComment",
         data: data,
         dataType: "JSON",
     })
     .then(function(res) {
         /* Wait implementation */
-    }, function(err) {
-        alert("Error occurred!");
-        /* location.reload(); */
-        $.tmpl(commentTemplate.join(""), data.content).insertAfter(prevComment);
-        if(prevComment.hasClass("comment")) {
-            prevComment.removeClass("hidden");
-            prevComment.addClass("hidden");
+        if( res.status == true ) {
+            $.tmpl(commentTemplate.join(""), data).insertAfter(prevComment);
+            if( !isOpen ) {
+                if(prevComment.hasClass("comment")) {
+                    prevComment.removeClass("hidden");
+                    prevComment.addClass("hidden");
+                }
+            }
+            btnNumOfComments.text(`${NumOfComments + 1}則留言`);
         }
-        btnNumOfComments.text(`${NumOfComments + 1}則留言`);
+        else if( res.status == false ) {
+            alert("留言發生錯誤");
+            console.log(res);
+        }
+    }, function(err) {
+        alert("留言發生錯誤");
+        console.log(err);
     });
-
     $(event.currentTarget).next("input").val("");
 }
 
@@ -566,4 +571,39 @@ function GetPrevDom(jqObj, num) {
         result = jqObj.prev();
     }
     return result;
+}
+
+function OnClickEditClass(e) {
+    let classId = $(e.currentTarget).parent().prev().children("p").text();
+    const editClassTemplate = `
+    <div class="flex flex-col items-center justify-center w-full f-fit">
+        <p class="hidden">${classId}</p>
+        <input class="text-lg classic-border rounded-md w-full h-fit p-3" type="text" placeholder="請輸入章節名稱"> 
+        <button onclick="EditClass(event)" class="text-lg text-white p-2 bg-blue-600 rounded-md w-24 h-fit m-2">修改</button>
+    </div>
+    `;
+    ShowModal({ title: "修改課程名稱", content: editClassTemplate });
+}
+
+function EditClass(e) {
+    let classId = parseInt(GetPrevDom($(e.currentTarget), 2).text());
+    let newClassName = $(e.currentTarget).prev().prev().text();
+    $.ajax({
+        type: "POST",
+        url: "urlHere",
+        data: { ClassID: classId, Name: newClassName },
+        dataType: "JSON",
+    })
+    .then(function(res) {
+        if( res.status == true ) {
+
+        }
+        else if( res.status == false ) {
+            alert("修改課程名稱發生錯誤");
+            console.log(res);
+        }
+    }, function(err) {
+        alert("修改課程名稱發生錯誤");
+        console.log(err);
+    });
 }

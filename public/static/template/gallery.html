@@ -28,7 +28,12 @@ $(document).ready(function() {
                     url: components["classCard"],
                     dataType: "text",
                     success: function (res) {
-                        $.tmpl(res, element).appendTo(main);
+                        let card = $.tmpl(res, element)
+                        card.appendTo(main);
+                        card.ready(function() {
+                            if( userData.Role === "Student")
+                                $($(card.children()[1]).children()[0]).addClass("hidden");
+                        });
                     },
                     error: function(err) {
                         console.log("Gallery.html 取得課程發生錯誤");

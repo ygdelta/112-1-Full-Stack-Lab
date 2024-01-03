@@ -766,7 +766,7 @@ app.post("/CreateComment", (req, res) => {
 
   const PublisherName = req.body.PublisherName;
   const Context = req.body.Context;
-  const DiscussID = req.body.ClassID;
+  const DiscussID = req.body.DiscussID;
   const Date=req.body.Date;
 
 
