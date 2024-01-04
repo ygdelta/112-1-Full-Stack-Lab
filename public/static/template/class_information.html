@@ -1,11 +1,10 @@
 <div id="class-content" class="w-3/5 text-center">
-    <p id="class-id" class="hidden">${}</p>
     <div id="chapter-content" class="flex flex-col h-auto p-4">
         <div id="btn-add-chapter" onclick="ShowModal({title: '新增章節', content: createChapterTemplate})" class="edit-nav text-center text-xl text-stone-400 border-dashed border border-stone-300 rounded-md w-full h-10 p-1 my-3 hover:cursor-pointer">新增章節</div>
     </div>
 </div>
 <script>
-$(document).ready(function() {
+$(function() {
     classId = $("#class-id").text();
     if(userData.Role === "Student")
         $(".edit-nav").addClass("hidden");
@@ -46,26 +45,4 @@ $(document).ready(function() {
         console.log(err);
     });
 });
-
-function OnSectionClick(e) {
-    let section = $(e.currentTarget);
-    let allSections = $("div.section");
-    if(section.data("isopened")) {
-        section.data("isopened", false);
-        allSections.removeClass("h-[402px]");
-        allSections.data("isopened", false);
-    }
-    else {
-        allSections.removeClass("h-[402px]");
-        allSections.data("isopened", false);
-        section.data("isopened", true);
-        section.addClass("h-[402px]");
-    }
-
-    /* 停止嵌入式畫面 */
-    let videoPlayer = $("iframe");
-    for(let i = 0; i < videoPlayer.length; i++) {
-        videoPlayer[i].contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*');
-    }
-}
 </script>

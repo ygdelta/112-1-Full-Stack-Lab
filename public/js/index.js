@@ -442,30 +442,59 @@ function expandComment(event) {
     }
 }
 
+function OnClickSection(e) {
+    let section = $(e.currentTarget);
+    let allSections = $("div.section");
+    if(section.data("isopened")) {
+        section.data("isopened", false);
+        allSections.removeClass("h-card");
+        allSections.data("isopened", false);
+    }
+    else {
+        allSections.removeClass("h-card");
+        allSections.data("isopened", false);
+        section.data("isopened", true);
+        section.addClass("h-card");
+    }
+
+    /* 停止嵌入式畫面 */
+    let videoPlayer = $("iframe");
+    for(let i = 0; i < videoPlayer.length; i++) {
+        videoPlayer[i].contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*');
+    }
+}
+
 function OnClickEditClass(e) {
     let classId = $(e.currentTarget).parent().prev().children("p").text();
     const editClassTemplate = `
     <div class="flex flex-col items-center justify-center w-full f-fit">
-        <p class="hidden">${classId}</p>
-        <input class="text-lg classic-border rounded-md w-full h-fit p-3" type="text" placeholder="請輸入章節名稱"> 
-        <button onclick="EditClass(event)" class="text-lg text-white p-2 bg-blue-600 rounded-md w-24 h-fit m-2">修改</button>
+        <div class="flex flex-row items-center w-full">
+            <p class="hidden">${classId}</p>
+            <input class="text-lg classic-border rounded-md w-full h-fit p-3" type="text" placeholder="請輸入課程名稱"> 
+            <button onclick="EditClass(event)" class="text-lg text-white p-2 bg-blue-600 rounded-md w-24 h-fit m-2">修改</button>
+        </div>
     </div>
     `;
     ShowModal({ title: "修改課程名稱", content: editClassTemplate });
 }
 
 function EditClass(e) {
-    let classId = parseInt(GetPrevDom($(e.currentTarget), 2).text());
-    let newClassName = $(e.currentTarget).prev().prev().text();
+    let classId = parseInt($(e.currentTarget).prev().prev().text());
+    let newClassName = $(e.currentTarget).prev().val();
     $.ajax({
         type: "POST",
-        url: "urlHere",
-        data: { ClassID: classId, Name: newClassName },
+        url: "/TeacherChangeClassName",
+        data: { ClassID: classId, ClassName: newClassName },
         dataType: "JSON",
     })
     .then(function(res) {
         if( res.status == true ) {
-
+            alert("修改成功");
+            let idDoms = $('p[hidden]');
+            for(let i = 0; i < idDoms.length; i++) {
+                if( parseInt($(idDoms[i]).text()) == classId )
+                    $($(idDoms[i]).next().children()[0]).text(newClassName);
+            }
         }
         else if( res.status == false ) {
             alert("修改課程名稱發生錯誤");
@@ -475,4 +504,91 @@ function EditClass(e) {
         alert("修改課程名稱發生錯誤");
         console.log(err);
     });
+    CloseModal();
+}
+
+function OnClickEditChapter(e) {
+    let chapterId = parseInt($(e.currentTarget).parent().prev().prev().text());
+    const editChapterTemplate = `
+    <div class="flex flex-col items-center justify-center w-full f-fit">
+        <div class="flex flex-row items-center w-full">
+            <p class="hidden">${chapterId}</p>
+            <input class="text-lg classic-border rounded-md w-full h-fit p-3" type="text" placeholder="請輸入章節名稱"> 
+            <button onclick="EditChapter(event)" class="text-lg text-white p-2 bg-blue-600 rounded-md w-24 h-fit m-2">修改</button>
+        </div>
+    </div>
+    `;
+    ShowModal({ title: "修改章節名稱", content: editChapterTemplate });
+}
+
+function EditChapter(e) {
+    let chapterId = parseInt($(e.currentTarget).prev().prev().text());
+    let newName = $(e.currentTarget).prev().val();
+    $.ajax({
+        type: "POST",
+        url: "/TeacherChangeChapterName",
+        data: { ChapterID: chapterId, ChapterName: newName },
+        dataType: "JSON",
+    })
+    .then(function(res) {
+        if( res.status == true ) {
+            alert("修改成功");
+            let idDoms = $('p.chapter-id');
+            for(let i = 0; i < idDoms.length; i++) {
+                if( parseInt($(idDoms[i]).text()) == chapterId )
+                    $(idDoms[i]).next().text(newName);
+            }
+        }
+        else if( res.status == false ) {
+            alert("修改名稱發生錯誤");
+            console.log(res);
+        }
+    }, function(err) {
+        alert("修改名稱發生錯誤");
+        console.log(err);
+    });
+    CloseModal();
+}
+
+function OnClickEditSection(e) {
+    let sectionId = parseInt($(e.currentTarget).parent().parent().prev().text());
+    const editSectionTemplate = `
+    <div class="flex flex-col items-center justify-center w-full f-fit">
+        <div class="flex flex-row items-center w-full">
+            <p class="hidden">${sectionId}</p>
+            <input class="text-lg classic-border rounded-md w-full h-fit p-3" type="text" placeholder="請輸入小節名稱"> 
+            <button onclick="EditSection(event)" class="text-lg text-white p-2 bg-blue-600 rounded-md w-24 h-fit m-2">修改</button>
+        </div>
+    </div>
+    `;
+    ShowModal({ title: "修改小節名稱", content: editSectionTemplate });
+}
+
+function EditSection(e) {
+    let sectionId = parseInt($(e.currentTarget).prev().prev().text());
+    let newName = $(e.currentTarget).prev().val();
+    $.ajax({
+        type: "POST",
+        url: "/TeacherChangeSectionName",
+        data: { SectionID: sectionId, SectionName: newName },
+        dataType: "JSON",
+    })
+    .then(function(res) {
+        if( res.status == true ) {
+            alert('修改成功');
+            let idDoms = $('p.section-id');
+            for(let i = 0; i < idDoms.length; i++) {
+                if( parseInt($(idDoms[i]).text()) == sectionId )
+                    $($(idDoms[i]).next().children()[0]).children('p').text(newName);
+            }
+        }
+        else if( res.status == false ) {
+            alert("修改名稱發生錯誤");
+            console.log(res);
+        }
+    }, function(err) {
+        alert("修改名稱發生錯誤");
+        console.log(err);
+    });
+    CloseModal();
 }

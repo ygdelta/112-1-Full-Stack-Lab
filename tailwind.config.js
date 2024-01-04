@@ -11,6 +11,9 @@ module.exports = {
       },
       fontFamily: {
         custom: ['Noto Sans KR', 'sans-serif']
+      },
+      height: {
+        'card': '402px'
       }
     },
   },
