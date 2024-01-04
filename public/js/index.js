@@ -1,59 +1,4 @@
-const pages = {
-    "home": "static/template/gallery.html",
-    "class": "static/template/class.html",
-    "class/information": "static/template/class_information.html",
-    "class/discussion": "static/template/class_discussion.html"
-};
-
-const components = {
-    "classCard": "static/template/class_card.html",
-    "classChapter": "static/template/class_chapter.html",
-    "commentCard": "static/template/message_area.html"
-};
-
-let userData = {
-    ID: "",
-    Name: "",
-    Role: ""
-};
-
-//<!--html-->
-const joinClassTemplate = `
-    <div class="flex items-center justify-center w-full f-fit">
-        <div class="flex flex-row items-center w-full">
-            <input class="text-lg classic-border rounded-md w-full h-fit p-3" type="number" placeholder="請輸入課程代碼"> 
-            <button onclick="OnJoinClass(event)" class="text-lg text-white p-2 bg-blue-600 rounded-md w-24 h-fit m-2">新增</button>
-        </div>
-    </div>
-`;
-//<!--!html-->
-
-//<!--html-->
-const createClassTemplate = `
-    <div class="flex items-center justify-center w-full f-fit">
-        <div class="flex flex-row items-center w-full">
-            <input class="text-lg classic-border rounded-md w-full h-fit p-3" type="input" placeholder="請輸入課程名稱"> 
-            <button onclick="OnCreateClass(event)" class="text-lg text-white p-2 bg-blue-600 rounded-md w-24 h-fit m-2">建立</button>
-        </div>
-    </div>
-`;
-//<!--!html-->
-
-//<!--html-->
-const createChapterTemplate = `
-    <div class="flex items-center justify-center w-full f-fit">
-        <div class="flex flex-row items-center w-full">
-            <input class="text-lg classic-border rounded-md w-full h-fit p-3" type="text" placeholder="請輸入章節名稱"> 
-            <button onclick="OnCreateChapter(event)" class="text-lg text-white p-2 bg-blue-600 rounded-md w-24 h-fit m-2">建立</button>
-        </div>
-    </div>
-`;
-//<!--!html-->
-
-
-
-$(document).ready(function () {
-
+$(function () {
     // Initiallize user data.
     Initiallize();
 
@@ -61,20 +6,21 @@ $(document).ready(function () {
     let content = $("#content");
     let sidebar = $("#sidebar");
 
-    // For Debug
     ShowPage("home");
-
-    sidebar.hover(function() {
-        if(sidebar.data("isOpen")) {
-            return;
-        }
-        ReWriteCss(sidebar, "width", "182px");
-    }, function() {
-        if(sidebar.data("isOpen")) {
-            return;
-        }
-        ReWriteCss(sidebar, "width", "64px");
-    });
+    
+    sidebar
+        .on('mouseover', function() {
+            if(sidebar.data("isOpen")) {
+                return;
+            }
+            ReWriteCss(sidebar, "width", "182px");
+        })
+        .on('mouseout', function() {
+            if(sidebar.data("isOpen")) {
+                return;
+            }
+            ReWriteCss(sidebar, "width", "64px");
+        });
 
     $("#user-name").text(userData.Name);
 
@@ -110,45 +56,9 @@ $(document).ready(function () {
         ShowPage("home");
     });
 
-    $()
 });
 
 // Funcitons
-function GetIDfromURL(url) {
-    const regExp = 
-      /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/|live\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
-    const match = url.match(regExp);
-    if (match && match[1].length === 11)
-      return match[1];
-    return '';
-}
-
-function ReWriteCss(element, cssStyle, property) {
-    element.css(cssStyle, property);
-}
-
-function ShowPage(page, container = $("#content")) {
-    $.ajax({
-        type: "GET",
-        url: pages[page],
-        dataType: "text",
-        success: function(res) {
-            container.html(res);
-        },
-        error: function(err) {
-            alert("ShowPage() Error!");
-        }
-    });
-}
-
-function FormatDate(date = new Date()) {
-    const year = date.toLocaleString("default", {year: "numeric"});
-    const month = date.toLocaleString("default", {month: "2-digit"});
-    const day = date.toLocaleString("default", {day: "2-digit"});
-    return year + month + day;
-    //return [year, month, day].join("-");
-}
-
 function SendComment(event) {
     /* Initiallize here */
     let id = $(event.currentTarget).parent().siblings("p.message-area-id").text();
@@ -211,31 +121,7 @@ function SendComment(event) {
     $(event.currentTarget).next("input").val("");
 }
 
-function ShowModal(setting = {
-    title: "Title",
-    content: "Content",
-}) {
-    let body = $("body");
-
-    //<!--html-->
-    let modal = `
-    <div id="modal" class="fixed top-0 left-0 z-[49]">
-        <div onclick="CloseModal()" class="fixed top-0 left-0 bg-gray-800 opacity-50 w-screen h-screen z-[49]"></div>
-        <div class="flex flex-col fixed top-[calc(50%-150px)] left-[calc(50%-250px)] bg-stone-50 classic-border rounded-md w-[500px] h-[300px] z-50">
-            <div class="font-semibold text-3xl border-solid border-b border-stone-300 w-full h-fit p-3">${setting.title}</div>
-            <div class="flex w-full h-full px-2 pb-3">${setting.content}</div>
-        </div>
-    </div>
-    `;
-    //<!--!html-->
-    $.tmpl(modal, {}).appendTo(body);
-}
-
-function CloseModal() {
-    $("#modal").remove();
-}
-
-function OnJoinClass(e) {
+function JoinClass(e) {
     let input = $(e.currentTarget).prev().val();
     if(userData.Role != "Student") {
         console.log("發生錯誤");
@@ -273,7 +159,7 @@ function OnJoinClass(e) {
     });
 }
 
-function OnCreateClass(e) {
+function CreateClass(e) {
     let input = $(e.currentTarget).prev().val();
     if(userData.Role != "Teacher") {
         console.log("發生錯誤");
@@ -310,7 +196,7 @@ function OnCreateClass(e) {
     });
 }
 
-function OnCreateChapter(e) {
+function CreateChapter(e) {
     let chapterName = $(e.currentTarget).prev().val();
     let classId = $("#class-id").text();
     if(chapterName == "") {
@@ -395,7 +281,7 @@ function CreateSection(e) {
     });
 }
 
-function OnDeleteChapter(e) {
+function DeleteChapter(e) {
     let chapterIdDom = $(e.currentTarget).parent().prev().prev();
     let classId = $("#class-id").text();
     if( !confirm("是否要刪除此章節") )
@@ -425,7 +311,7 @@ function OnDeleteChapter(e) {
     });
 }
 
-function OnDeleteSection(e) {
+function DeleteSection(e) {
     let sectionIdDom = $(e.currentTarget).parent().prev();
     let chapterIdDom = $(e.currentTarget).parent().parent()
                             .parent().prev().children("p");
@@ -468,16 +354,7 @@ function Initiallize() {
     userData.Role = parseData.Role;
 }
 
-function parseJwt(token) {
-    var base64Url = token.split('.')[1];
-    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-    return JSON.parse(jsonPayload);
-}
-
-function OnDeleteClass(e) {
+function DeleteClass(e) {
     let idDom = $(e.currentTarget)
                     .parent()
                     .prev()
@@ -527,7 +404,7 @@ function OnDeleteClass(e) {
     }
 }
 
-function CardOnClick(e) {
+function OnClickCard(e) {
     let id = $(e.currentTarget).find("p#id");
     $("#class-id").text(id.text());
     ShowPage("class");
@@ -563,14 +440,6 @@ function expandComment(event) {
         comments.removeClass("hidden");
         btnExpand.data("isopened", "true");
     }
-}
-
-function GetPrevDom(jqObj, num) {
-    let result;
-    for(let i = 0; i < num; i++) {
-        result = jqObj.prev();
-    }
-    return result;
 }
 
 function OnClickEditClass(e) {
