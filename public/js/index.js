@@ -145,7 +145,12 @@ function JoinClass(e) {
                 dataType: "text"
             })
             .then(function(template) {
-                $.tmpl(template, res.data).appendTo("#gallery-main");
+                let card = $.tmpl(template, res.data);
+                card.appendTo("#gallery-main");
+                card.ready(function() {
+                    if( userData.Role === "Student")
+                        $($(card.children()[1]).children()[0]).addClass("hidden");
+                });
             }, function(err) {
                 console.log(err);
             });
@@ -314,9 +319,11 @@ function DeleteChapter(e) {
 }
 
 function DeleteSection(e) {
-    let sectionIdDom = $(e.currentTarget).parent().prev();
+    let sectionIdDom = $(e.currentTarget).parent().parent().prev();
     let chapterIdDom = $(e.currentTarget).parent().parent()
-                            .parent().prev().children("p");
+                            .parent().parent().prev().children("p");
+    console.log(sectionIdDom);
+    console.log(sectionIdDom.text());
     if( !confirm("是否要刪除小節") )
         return;
     $.ajax({

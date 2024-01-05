@@ -67,7 +67,10 @@ $(document).ready(function() {
                 if( res.status == true ) {
                     cardData.id = res.data;
                     console.log(cardData);
-                    $.tmpl(commentCard, cardData).insertBefore($("#message-container").next());
+                    if( $("#message-container").next().length != 0 ) 
+                        $.tmpl(commentCard, cardData).insertBefore($("#message-container").next());
+                    else
+                        $.tmpl(commentCard, cardData).insertAfter($("#message-container"));
                 }
                 else if( res.status == false ) {
                     alert("建立討論串發生錯誤");
