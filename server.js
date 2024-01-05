@@ -521,39 +521,90 @@ app.post("/TeacherChangeClassName", (req, res) => {
 
 
 app.post("/TeacherDeleteClass", (req, res) => {
-  //記得加入確認該Class的TeacherID為目前登入身分的ID
-  const classtab = `
-    DELETE FROM Class
-    WHERE ID=?
-  `;
-  const teacher_to_class = `
-    DELETE FROM Teacher_to_Class_relation
-    WHERE TeacherID=? AND ClassID =?
-  `;
-
   const ClassID = req.body.ClassID;
   const TeacherID = req.body.UserID;
-  //const ClassName = req.body.ClassName;
 
-  db.run(classtab, [ClassID], function (err) {
+  // 先確認該Class的TeacherID為目前登入身分的ID
+  const checkTeacherQuery = `
+    SELECT COUNT(*) AS count FROM Class
+    WHERE ID = ? AND TeacherID = ?
+  `;
+
+  // 刪除Class
+  const deleteClassQuery = `
+    DELETE FROM Class
+    WHERE ID = ?
+  `;
+
+  // 刪除該Class中的Chapter
+  const deleteChaptersQuery = `
+    DELETE FROM Chapter
+    WHERE ClassID = ?
+  `;
+
+  // 刪除每個Chapter中的Section
+  const deleteSectionsQuery = `
+    DELETE FROM Section
+    WHERE ID IN (
+      SELECT Section.ID
+      FROM Section
+      JOIN Chapter_to_Section_relation ON Section.ID = Chapter_to_Section_relation.SectionID
+      JOIN Chapter ON Chapter_to_Section_relation.ChapterID = Chapter.ID
+      WHERE Chapter.ClassID = ?
+    )
+  `;
+
+  // 刪除該Class和Teacher的關聯
+  const deleteTeacherClassRelationQuery = `
+    DELETE FROM Teacher_to_Class_relation
+    WHERE TeacherID = ? AND ClassID = ?
+  `;
+
+  // 檢查TeacherID是否為該Class的擁有者
+  db.get(checkTeacherQuery, [ClassID, TeacherID], (err, result) => {
     if (err) {
-      res.status(200).json({ status: false, error: err.message });
+      res.status(500).json({ status: false, error: err.message });
       return;
     }
 
-    // 插入成功，回傳成功訊息
-    //res.json({ status: true, message: 'Create class successfully.' });
-    db.run(teacher_to_class, [TeacherID, ClassID], function (err) {
+    if (result.count === 0) {
+      res.status(403).json({ status: false, error: "Teacher does not own this class." });
+      return;
+    }
+
+    // 開始執行刪除操作
+    db.run(deleteSectionsQuery, [ClassID], (err) => {
       if (err) {
-        res.status(200).json({ status: false, error: err.message });
+        res.status(500).json({ status: false, error: err.message });
         return;
       }
 
-      // 插入成功，回傳成功訊息
-      res.json({ status: true, message: 'Teacher delete Class successfully.' });
+      db.run(deleteChaptersQuery, [ClassID], (err) => {
+        if (err) {
+          res.status(500).json({ status: false, error: err.message });
+          return;
+        }
+
+        db.run(deleteClassQuery, [ClassID], (err) => {
+          if (err) {
+            res.status(500).json({ status: false, error: err.message });
+            return;
+          }
+
+          db.run(deleteTeacherClassRelationQuery, [TeacherID, ClassID], (err) => {
+            if (err) {
+              res.status(500).json({ status: false, error: err.message });
+              return;
+            }
+
+            res.json({ status: true, message: 'Teacher deleted the class and associated content successfully.' });
+          });
+        });
+      });
     });
   });
 });
+
 ////////////////////////////////////////////老師在課程中章節的創建/刪除
 app.post("/TeacherCreateChapter", (req, res) => {
   const chaptertab = `
