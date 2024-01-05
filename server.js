@@ -888,7 +888,7 @@ app.post("/TeacherDeleteSection", (req, res) => {
       return;
     }
 
-    // 插入成功，回傳成功訊息
+    // 刪除成功，回傳成功訊息
     //res.json({ status: true, message: 'Create class successfully.' });
     db.run(chapter_to_section, [ChapterID, SectionID], function (err) {
       if (err) {
@@ -896,7 +896,7 @@ app.post("/TeacherDeleteSection", (req, res) => {
         return;
       }
 
-      // 插入成功，回傳成功訊息
+      // 刪除成功，回傳成功訊息
       res.json({ status: true, message: 'Teacher delete Section successfully.' });
     });
   });
