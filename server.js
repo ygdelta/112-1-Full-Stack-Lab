@@ -333,40 +333,60 @@ app.post("/StudentJoinClass", (req, res) => {
   const selectClass = `
     SELECT ID, Name FROM Class WHERE ID = ?
   `;
+  const checkExistingEntry = `
+    SELECT COUNT(*) AS count FROM Student_to_Class_relation
+    WHERE UserID = ? AND ClassID = ?
+  `;
 
   const studentID = req.body.UserID;
   const ClassID = req.body.ClassID;
 
-  db.run(student_join_class, [studentID, ClassID], function (err) {
+  // Check if the entry already exists
+  db.get(checkExistingEntry, [studentID, ClassID], function (err, existingRow) {
     if (err) {
       res.status(200).json({ status: false, error: err.message });
       return;
     }
 
-    // 插入成功，回傳成功訊息
-    db.get(selectClass, [ClassID], function (err, row) {
+    if (existingRow && existingRow.count > 0) {
+      // Entry already exists, return an appropriate response
+      res.status(200).json({ status: false, error: "Student is already part of the class." });
+      return;
+    }
+
+    // Entry does not exist, proceed with insertion
+    db.run(student_join_class, [studentID, ClassID], function (err) {
       if (err) {
         res.status(200).json({ status: false, error: err.message });
         return;
       }
 
-      if (!row) {
-        res.status(200).json({ status: false, error: "Class not found." });
-        return;
-      }
+      // Insertion successful, retrieve class information
+      db.get(selectClass, [ClassID], function (err, row) {
+        if (err) {
+          res.status(200).json({ status: false, error: err.message });
+          return;
+        }
 
-      // 回傳成功訊息及課程資訊
-      res.json({
-        status: true,
-        data: {
-          ID: row.ID,
-          Name: row.Name,
-        },
-        message: 'Student Join class successfully.',
+        if (!row) {
+          res.status(200).json({ status: false, error: "Class not found." });
+          return;
+        }
+
+        // Return success message and class information
+        res.json({
+          status: true,
+          data: {
+            ID: row.ID,
+            Name: row.Name,
+          },
+          message: 'Student joined the class successfully.',
+        });
       });
     });
   });
 });
+
 
 app.post("/StudentExitClass", (req, res) => {
   const student_exit_class = `
