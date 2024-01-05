@@ -15,98 +15,13 @@ function GenerateUserToken(userData) {
   return token;
 }
 
-// db.each('SELECT * FROM student', function (err, row) {
-//   if (err) return console.log(err.message);
-//   console.log(row.ID + ':' + row.Name + " " + row.Subject);
-// });
-// db.close();
-/////////////////////////////12/21練習的領域(查詢)/////////////////////////////////////////
-// SQL查詢學生有哪些課
 
-// SQL查詢課的老師是誰
-const query2 = `
-    SELECT User.ID as TeacherID, User.Name as TeacherName, Class.Name as ClassName
-    FROM Class
-    JOIN User ON User.ID = Class.TeacherID
-    WHERE Class.Name = ?;
-`;
-
-const find_account = `
-    SELECT User.Account
-    FROM User
-    WHERE User.Account = ?;
-`;
-//測試用
-const target = '蔡明誠';
-// 執行查詢
-db.all(query2, [target], (err, rows) => {
-  if (err) {
-    throw err;
-  }
-
-  // 處理查詢結果
-  //console.log(`Information about ${target} :`);
-  rows.forEach(row => {
-    //console.log(`Class ID: ${row.ID}, Class Name: ${row.ClassName}`);
-    //console.log(`Teacher ID: ${row.TeacherID}, Teacher Name: ${row.TeacherName}, Class Name: ${row.ClassName}`);
-    console.log(`Teacher ID: ${row.TeacherID}, Teacher Name: ${row.TeacherName}, Class ID: ${row.ClassID}, Class Name: ${row.ClassName}`);
-  });
-
-
-});
-////////////////////////////////資料庫修改/////////////////////////////////////////////////////
-const userIdToUpdate = 2;
-const newName = '楊小煜';
-const updateQuery = `
-    UPDATE User
-    SET Name = ?
-    WHERE ID = ?;
-`;
-db.run(updateQuery, [newName, userIdToUpdate], function (err) {
-  if (err) {
-    throw err;
-  }
-
-  // 這裡的 this.lastID 是最後一次插入的行的ID，這裡是更新，所以通常為更新的行數
-  //console.log(`Update success: ${this.changes}`);
-
-});
-////////////////////////////////資料庫刪除/////////////////////////////////////////////////////
-const classIdToDelete = 4;
-const deleteQuery = `
-    DELETE FROM Class
-    WHERE ID = ?;
-`;
-
-// 執行刪除語句
-db.run(deleteQuery, [classIdToDelete], function (err) {
-  if (err) {
-    throw err;
-  }
-
-  // 這裡的 this.changes 是受影響的行數，通常為刪除的行數
-  //console.log(`Delete success: ${this.changes}`);
-});
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////
-// 設定靜態資源目錄
+///////////////////////////////////////////////////////////////////////////// 設定靜態資源目錄
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// app.post("/getdiscuss",function(req,res){
-//   var discuss_and_comments=`
-//     SELECT Class.ID, Class.Name as ClassName, Class.TeacherID as TeacherName
-//     FROM User
-//     JOIN StoC_relation ON User.ID = StoC_relation.UserID
-//     JOIN Class ON StoC_relation.ClassID = Class.ID
-//     WHERE User.ID = ?;
-//   `;
-
-
-// });
 
 app.post("/getclasses", function (req, res) {
   const ID = req.body.id;
@@ -158,19 +73,9 @@ app.post("/getclasses", function (req, res) {
       data: result
     }));
   });
-  //console.log("xxxxxxxxxxxxxxxxxxx");
+
 });
 
-// app.post("/postdata", function (req, res) {
-//   // 從 request body 中獲取 JSON 數據
-//   const data = req.body;
-
-//   console.log("Received data:");
-//   console.log(data);
-
-// 做其他處理或回傳回應
-//   res.status(200).json({ message: "Data received successfully", receivedData: data });
-// });
 
 app.post("/StudentLogin", function (req, res) {
   const queryParam = [req.body.Account, req.body.Password];
@@ -284,7 +189,7 @@ app.post("/StudentRegister", (req, res) => {
           res.status(200).json({ status: false, error: err.message });
           return;
         }
-        // 插入成功，回傳成功訊息
+        // 註冊成功，回傳成功訊息
         res.json({ status: true, message: 'User registered successfully.' });
       });
     }
@@ -301,11 +206,11 @@ app.post("/TeacherRegister", (req, res) => {
     INSERT INTO User(Role, Name, Account, Password)
     VALUES(?, ?, ?, ?)
   `;
-  //var result = [];
+
   const Name = req.body.Name;
   const Account = req.body.Account;
   const Password = req.body.Password;
-  //console.log(result);
+
   db.all(checkUser, [Account], function (err, rows) {
     if (rows.length != 0) {
       res.status(200).json({ status: false, error: "存在相同帳號" });
@@ -316,7 +221,7 @@ app.post("/TeacherRegister", (req, res) => {
           res.status(200).json({ status: false, error: err.message });
           return;
         }
-        // 插入成功，回傳成功訊息
+        // 註冊成功，回傳成功訊息
         res.json({ status: true, message: 'User registered successfully.' });
       });
     }
@@ -341,7 +246,7 @@ app.post("/StudentJoinClass", (req, res) => {
   const studentID = req.body.UserID;
   const ClassID = req.body.ClassID;
 
-  // Check if the entry already exists
+  // 檢查學生是否已在此課程
   db.get(checkExistingEntry, [studentID, ClassID], function (err, existingRow) {
     if (err) {
       res.status(200).json({ status: false, error: err.message });
@@ -349,19 +254,17 @@ app.post("/StudentJoinClass", (req, res) => {
     }
 
     if (existingRow && existingRow.count > 0) {
-      // Entry already exists, return an appropriate response
+      // 如果學生已在此課程 則無法加入
       res.status(200).json({ status: false, error: "Student is already part of the class." });
       return;
     }
 
-    // Entry does not exist, proceed with insertion
     db.run(student_join_class, [studentID, ClassID], function (err) {
       if (err) {
         res.status(200).json({ status: false, error: err.message });
         return;
       }
 
-      // Insertion successful, retrieve class information
       db.get(selectClass, [ClassID], function (err, row) {
         if (err) {
           res.status(200).json({ status: false, error: err.message });
@@ -373,7 +276,7 @@ app.post("/StudentJoinClass", (req, res) => {
           return;
         }
 
-        // Return success message and class information
+        // 加入成功 回傳訊息
         res.json({
           status: true,
           data: {
@@ -402,7 +305,7 @@ app.post("/StudentExitClass", (req, res) => {
       res.status(200).json({ status: false, error: err.message });
       return;
     }
-    // 插入成功，回傳成功訊息
+    // 刪除成功，回傳成功訊息
     res.json({ status: true, message: 'Student Exit class successfully.' });
   });
 
@@ -572,7 +475,7 @@ app.post("/TeacherDeleteClass", (req, res) => {
       return;
     }
 
-    // 開始執行刪除操作
+    // 刪除操作
     db.run(deleteSectionsQuery, [ClassID], (err) => {
       if (err) {
         res.status(500).json({ status: false, error: err.message });
@@ -946,8 +849,6 @@ app.post("/CreateDiscuss", (req, res) => {
 
     const DiscussID = this.lastID;
 
-    // 插入成功，回傳成功訊息
-    //res.json({ status: true, message: 'Create class successfully.' });
     db.run(class_to_dis, [ClassID, DiscussID], function (err) {
       if (err) {
         res.status(200).json({ status: false, error: err.message });
@@ -958,7 +859,7 @@ app.post("/CreateDiscuss", (req, res) => {
           res.status(200).json({ status: false, error: err });
           return;
         }
-        // 插入成功，回傳成功訊息
+        // 新增成功 回傳成功訊息
         res.json({ status: true, data: row.ID, message: 'discuss create successfully.' });
       });
     });
@@ -987,15 +888,13 @@ app.post("/DeleteDiscuss", (req, res) => {
       return;
     }
 
-    // 插入成功，回傳成功訊息
-    //res.json({ status: true, message: 'Create class successfully.' });
     db.run(class_to_discuss, [ClassID, DiscussID], function (err) {
       if (err) {
         res.status(200).json({ status: false, error: err.message });
         return;
       }
 
-      // 插入成功，回傳成功訊息
+      // 刪除成功，回傳成功訊息
       res.json({ status: true, message: 'discuss delete successfully.' });
     });
 
@@ -1029,15 +928,13 @@ app.post("/CreateComment", (req, res) => {
 
     const comID = this.lastID;
 
-    // 插入成功，回傳成功訊息
-    //res.json({ status: true, message: 'Create class successfully.' });
     db.run(discuss_to_comment, [DiscussID, comID], function (err) {
       if (err) {
         res.status(200).json({ status: false, error: err.message });
         return;
       }
 
-      // 插入成功，回傳成功訊息
+      // 新建成功，回傳成功訊息
       res.json({ status: true, message: 'comment create successfully.' });
     });
 
@@ -1065,15 +962,13 @@ app.post("/DeleteComment", (req, res) => {
       return;
     }
 
-    // 插入成功，回傳成功訊息
-    //res.json({ status: true, message: 'Create class successfully.' });
     db.run(discuss_to_comment, [ClassID, DiscussID], function (err) {
       if (err) {
         res.status(200).json({ status: false, error: err.message });
         return;
       }
 
-      // 插入成功，回傳成功訊息
+      // 刪除成功，回傳成功訊息
       res.json({ status: true, message: 'comment delete successfully.' });
     });
 
@@ -1104,7 +999,6 @@ app.post("/GetClassDiscussion", function (req, res) {
     }
     if (rows.length == 0)
       res.status(200).json({ status: true, data: [] });
-    // 處理查詢結果
     rows.forEach(discussRow => {
       var discussItem = {
         id: discussRow.ID,
@@ -1114,7 +1008,6 @@ app.post("/GetClassDiscussion", function (req, res) {
         comment: []
       };
 
-      // 查詢評論
       var find_comment = `
         SELECT Comments.ID, Comments.PublisherName, Comments.Context, Comments.Date
         FROM Discuss
