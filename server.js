@@ -605,6 +605,7 @@ app.post("/TeacherDeleteClass", (req, res) => {
   });
 });
 
+
 ////////////////////////////////////////////老師在課程中章節的創建/刪除
 app.post("/TeacherCreateChapter", (req, res) => {
   const chaptertab = `
@@ -719,37 +720,53 @@ app.post("/TeacherChangeChapterName", (req, res) => {
 
 
 app.post("/TeacherDeleteChapter", (req, res) => {
-  //記得加入確認該Class的TeacherID為目前登入身分的ID
-  const chaptertab = `
-    DELETE FROM Chapter
-    WHERE ID=?
-  `;
-  const class_to_chapter = `
-    DELETE FROM Class_to_Chapter_relation
-    WHERE ClassID=? AND ChapterID =?
-  `;
-
   const ChapterID = req.body.ChapterID;
   const ClassID = req.body.ClassID;
-  //const ClassName = req.body.ClassName;
-  console.log(ChapterID);
-  console.log(ClassID);
-  db.run(chaptertab, [ChapterID], function (err) {
+
+  // 刪除Chapter_to_Section_relation中該ChapterID對應的所有SectionID
+  const deleteChapterSectionsQuery = `
+    DELETE FROM Section
+    WHERE ID IN (
+      SELECT Section.ID
+      FROM Section
+      JOIN Chapter_to_Section_relation ON Section.ID = Chapter_to_Section_relation.SectionID
+      WHERE Chapter_to_Section_relation.ChapterID = ?
+    )
+  `;
+
+  // 刪除Class_to_Chapter_relation
+  const deleteClassChapterRelationQuery = `
+    DELETE FROM Class_to_Chapter_relation
+    WHERE ClassID = ? AND ChapterID = ?
+  `;
+
+  // 刪除Chapter
+  const deleteChapterQuery = `
+    DELETE FROM Chapter
+    WHERE ID = ?
+  `;
+
+  // 開始執行刪除操作
+  db.run(deleteChapterSectionsQuery, [ChapterID], (err) => {
     if (err) {
-      res.status(200).json({ status: false, error: err.message });
+      res.status(500).json({ status: false, error: err.message });
       return;
     }
 
-    // 插入成功，回傳成功訊息
-    //res.json({ status: true, message: 'Create class successfully.' });
-    db.run(class_to_chapter, [ClassID, ChapterID], function (err) {
+    db.run(deleteClassChapterRelationQuery, [ClassID, ChapterID], (err) => {
       if (err) {
-        res.status(200).json({ status: false, error: err.message });
+        res.status(500).json({ status: false, error: err.message });
         return;
       }
 
-      // 插入成功，回傳成功訊息
-      res.json({ status: true, message: 'Teacher delete Chpater successfully.' });
+      db.run(deleteChapterQuery, [ChapterID], (err) => {
+        if (err) {
+          res.status(500).json({ status: false, error: err.message });
+          return;
+        }
+
+        res.json({ status: true, message: 'Chapter and associated content deleted successfully.' });
+      });
     });
   });
 });
