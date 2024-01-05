@@ -408,7 +408,10 @@ function DeleteClass(e) {
 
 function OnClickCard(e) {
     let id = $(e.currentTarget).find("p#id");
+    let className = $($($(e.currentTarget).children()[2]).children('p')[0]).text();
     $("#class-id").text(id.text());
+    $($('p.class-name')[0]).text('>');
+    $($('p.class-name')[1]).text(className);
     ShowPage("class");
 }
 

@@ -12,6 +12,10 @@ function ReWriteCss(element, cssStyle, property) {
 }
 
 function ShowPage(page, container = $("#content")) {
+    if( page == 'home' ) {
+        $('#class-id').text('');
+        $('p.class-name').text('');
+    }
     $.ajax({
         type: "GET",
         url: pages[page],
