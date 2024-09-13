@@ -811,10 +811,6 @@ input[type="number"]::-webkit-inner-spin-button,
   height: 340px;
 }
 
-.h-\[402px\] {
-  height: 402px;
-}
-
 .h-\[68px\] {
   height: 68px;
 }
@@ -838,10 +834,6 @@ input[type="number"]::-webkit-inner-spin-button,
 
 .h-screen {
   height: 100vh;
-}
-
-.w-1 {
-  width: 0.25rem;
 }
 
 .w-10 {
